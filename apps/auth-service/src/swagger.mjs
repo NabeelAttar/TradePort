@@ -1,4 +1,3 @@
-import { version } from "os";
 import swaggerAutogen from "swagger-autogen";
 
 const doc = {
