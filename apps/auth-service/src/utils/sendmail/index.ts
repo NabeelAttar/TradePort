@@ -24,6 +24,7 @@ const transporter = nodemailer.createTransport({
 const renderEmailTemplate = async (templateName: string, data: Record<string, any>) : Promise<string> => {
     const templatePath = path.join( //Builds absolute file path safely
         process.cwd(), //return working directory of the current process 
+        "apps",
         "auth-service",
         "src",
         "utils",

@@ -1,8 +1,8 @@
 // a utility function for authentication - to avoid writing the same function multiple times for user, sellers and admin
 import cryto from 'crypto';
-import { ValidationError } from '../../../../packages/error-handler';
+import { ValidationError } from '@packages/error-handler';
 import { NextFunction } from 'express';
-import redis from '../../../../packages/libs/redis';
+import redis from '@packages/libs/redis';
 import { sendEmail } from './sendmail';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
