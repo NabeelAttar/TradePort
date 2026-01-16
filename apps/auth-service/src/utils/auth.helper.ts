@@ -1,9 +1,10 @@
 // a utility function for authentication - to avoid writing the same function multiple times for user, sellers and admin
 import cryto from 'crypto';
 import { ValidationError } from '@packages/error-handler';
-import { NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import redis from '@packages/libs/redis';
 import { sendEmail } from './sendmail';
+import prisma from '@packages/libs/prisma';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const validateRegistrationData = (data: any, userType: "user" | "seller") => {
@@ -78,4 +79,50 @@ export const verifyOtp = async (email: string, otp: string, next: NextFunction) 
     }
 
     await redis.del(`otp:${email}`, failedAttemptsKey);
+}
+
+export const handleForgotPassword = async (req: Request, res: Response, userType: "user" | "seller", next: NextFunction) => {
+    try {
+        const { email } = req.body
+        if(!email){
+            throw new ValidationError("Email is required!");
+        }
+
+        const user = userType === "user" && await prisma.users.findUnique({ where : { email } } );
+        if(!user){
+            throw new ValidationError(`${userType} is not found!`);
+        }
+
+        // check otp restrictions - as for forgot password we are sending otp
+        await checkOtpRestrictions(email, next);
+        await trackOtpRequests(email, next);
+
+        // generate otp and sendmail
+        await sendOtp(user.name, email, "forgot-password-user-mail");
+
+        res.status(200).json({
+            message: "OTP sent to mail, please verify your account.",
+        });
+
+    } catch (error) {
+        return next(error);
+    }
+}
+
+export const verifyForgotPasswordOTP = async ( req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email, otp }= req.body;
+        if(!email || !otp){
+            throw new ValidationError("Email and OTP are required!");
+        }
+
+        await verifyOtp(email, otp, next);
+
+        res.status(200).json({
+            message: "OTP verified. You can reset your password."
+        })
+
+    } catch (error) {
+        return next(error);
+    }
 }
