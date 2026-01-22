@@ -3,8 +3,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import GoogleButton from '../../shared/components/GoogleButton';
+import GoogleButton from '../../../shared/components/GoogleButton';
 import { Eye, EyeOff } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
 
 type FormData = {
   email: string,
@@ -20,9 +22,27 @@ const Login = () => {
 
 
   const {register, handleSubmit, formState: {errors}} = useForm<FormData>();
+
+  const loginMutation = useMutation({
+    mutationFn: async(data: FormData) => {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/login-user`,
+        data,
+        {withCredentials: true}, //for storing data in cookies
+      );
+      return response.data
+    },
+    onSuccess: (data) => {
+      setServerError(null);
+      router.push("/");
+    },
+    onError: (error: AxiosError) => {
+      const errorMessage = (error.response?.data as {message?: string})?.message || "Invalid credentials!";
+      setServerError(errorMessage);
+    }, 
+  })
   
   const onSubmit = (data: FormData) => {
-
+    loginMutation.mutate(data);
   }
 
   return (
@@ -36,7 +56,7 @@ const Login = () => {
       <div className='w-full flex justify-center'>
         <div className='md:w-[480px] p-8 bg-white shadow rounded-lg '>
           <h3 className='text-3xl font-semibold text-center mb-2'>
-            Log into TradePort
+            Login to TradePort
           </h3>
           <p className='text-center text-gray-500 mb-4'>
             Don't have an account?{"  "}
@@ -61,7 +81,7 @@ const Login = () => {
             {...register("email", {
               required: "Email is required!",
               pattern: {
-                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+ \.[a-zA-Z]{2, 4}$/,
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                 message: "Invalid email address",
               }
             })}
@@ -102,12 +122,12 @@ const Login = () => {
               </Link>
             </div>
 
-            <button type='submit' className='w-full cursor-pointer bg-black text-white py-2 rounded-lg'>
-              Login
+            <button type='submit' disabled={loginMutation.isPending} className='w-full cursor-pointer bg-black text-white py-2 rounded-lg'>
+              {loginMutation.isPending ? "Loggin in..." : "Login"}
             </button>
 
             {serverError && (
-              <p className='text-red-500 text-sm'>{String(serverError)}</p>
+              <p className='text-red-500 text-sm mt-2'>{serverError}</p>
             )}
           </form>
         </div>
