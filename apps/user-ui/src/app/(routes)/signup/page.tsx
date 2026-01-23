@@ -171,6 +171,11 @@ const Signup = () => {
               {errors.password && (
                 <p className='text-red-500 text-sm'>{String(errors.password.message)}</p>
               )}
+              {signupMutation.isError && signupMutation.error instanceof AxiosError && (
+                <p className='text-red-500 text-sm mt-2'>
+                  {signupMutation.error.response?.data?.message || signupMutation.error.message}
+                </p>
+              )}
 
               </div>
 
