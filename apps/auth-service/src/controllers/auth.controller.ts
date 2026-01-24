@@ -6,6 +6,8 @@ import { AuthError, ValidationError } from '@packages/error-handler';
 import bcrypt from 'bcryptjs';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken'
 import { setCookie } from '../utils/cookies/setCookie';
+import Stripe from 'stripe';
+
 
 // register a new user 
 export const userRegistration = async (req: Request, res: Response, next: NextFunction) => {
@@ -24,7 +26,7 @@ export const userRegistration = async (req: Request, res: Response, next: NextFu
         await checkOtpRestrictions(email, next);
         await trackOtpRequests(email, next); //this will also do the work of forgot password and reset password , as there is otps there is no need of forgot password
         await sendOtp(name, email, "user-activation-mail");
-
+        
         res.status(200).json({
             message: "OTP send to your email. Please verify your account.",
         });
@@ -47,19 +49,19 @@ export const verifyUser = async (req: Request, res: Response, next: NextFunction
         }
         
         await verifyOtp(email, otp, next);
-
+        
         const hashedPassword = await bcrypt.hash(password, 10);
-
+        
         // create account as all security checks are done
         const user = await prisma.users.create({
             data: {name, email, password: hashedPassword},
         });
-
+        
         res.status(201).json({
             success: true,
             message: "User registered successfully"
         })
-
+        
     } catch (error) {
         return next(error);
     }
@@ -77,7 +79,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
         if(!user){
             return next(new AuthError("User does not exist"));
         }
-
+        
         // verify password
         const isMatch = await bcrypt.compare(password, user.password!); //! says that ik user.password isnt null, it is string, 
         // eearlier it was giving error thinking it could be null, and bcrypt.compare method cant compare with null values 
@@ -122,7 +124,7 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
         if(!refreshToken){
             return new ValidationError("Unauthorized. No refresh Token.");
         }
-
+        
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string) as {id: string, role: string};
         if(!decoded || !decoded.id || !decoded.role){
             return new JsonWebTokenError("Forbidden! Invalid Refresh Token.");
@@ -137,9 +139,9 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
         const newAccessToken = jwt.sign({ id: decoded.id, role: decoded.role }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: "15m" });
         
         setCookie(res, "access_token", newAccessToken);
-
+        
         return res.status(201).json({ success: true });
-
+        
     } catch (error) {
         return next(error);
     }
@@ -175,7 +177,7 @@ export const resetUserPassword = async (req: Request, res: Response, next: NextF
         if(!email || !newPassword){
             return next(new ValidationError("Email and new Password are required!"));
         }
-
+        
         const user = await prisma.users.findUnique({ where : { email } } );
         if(!user){
             return next(new ValidationError("User not found!"));
@@ -193,11 +195,11 @@ export const resetUserPassword = async (req: Request, res: Response, next: NextF
             where: {email},
             data: { password: hashedPassword },
         });
-
+        
         res.status(200).json({
             message: "Password reset successful."
         })
-
+        
     } catch (error) {
         return next(error);
     }
@@ -214,11 +216,11 @@ export const registerSeller = async (req: Request, res: Response, next: NextFunc
         if(existingSeller){
             throw new ValidationError("Seller already exists with this email.");
         }
-
+        
         await checkOtpRestrictions(email, next);
         await trackOtpRequests(email, next);
         await sendOtp(name, email, "seller-activation-mail");
-
+        
         res.status(200).json({
             message: "OTP sent to email. Please verify your account."
         })
@@ -240,7 +242,7 @@ export const verifySeller = async (req: Request, res: Response, next: NextFuncti
         if(existingSeller){
             return next(new ValidationError("Seller already exists with this email."));
         }
-
+        
         await verifyOtp(email, otp, next);
         const hashedPassword = await bcrypt.hash(password, 10);
         
@@ -258,7 +260,7 @@ export const verifySeller = async (req: Request, res: Response, next: NextFuncti
             seller,
             message: "Seller registered Successfully!"
         });
-
+        
     } catch (error) {
         next(error);
     }
@@ -280,7 +282,7 @@ export const createShop = async (req: Request, res: Response, next: NextFunction
             category,
             sellerId
         };
-
+        
         if(website && website.trim() !== ""){
             shopData.website = website
         }
@@ -293,11 +295,120 @@ export const createShop = async (req: Request, res: Response, next: NextFunction
             success: true,
             shop,
         });
-
+        
     } catch (error) {
         next(error);
     }
 }
 
+// setup stripe
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: "2025-12-15.clover",
+})
 // create stripe account link for seller
+export const createStripeConnectLink = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {sellerId} = req.body;
+        if(!sellerId){
+            return next(new ValidationError("Seller ID is required!"));
+        }
+
+        const seller = await prisma.sellers.findUnique({where : {id : sellerId}});
+        if(!seller){
+            return next(new ValidationError("Seller is not available with this ID!"));
+        }
+        
+        const account = await stripe.accounts.create({
+            type: "express",
+            email: seller?.email,
+            country: "GB",
+            capabilities: {
+                card_payments: {requested: true},
+                transfers: {requested: true},
+            }
+        })
+
+        await prisma.sellers.update({
+            where : {id: sellerId}, 
+            data: {stripeId: account.id}
+        });
+
+        const accountLink = await stripe.accountLinks.create({
+            account: account.id,
+            refresh_url: `http://localhost:3000/success`,
+            return_url: `http://localhost:3000/success`,
+            type: "account_onboarding", 
+        })
+
+        res.json({url : accountLink.url});
+
+    } catch (error) {
+        return next(error);
+    }
+}
+
+// login seller
+export const loginSeller = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {email, password} = req.body;
+        if(!email || !password){
+            return next(new ValidationError("Email and password are required fields!"));
+        }
+
+        const seller = await prisma.sellers.findUnique({where: { email }});
+        if(!seller){
+            return next(new AuthError("Invalid email or password"));
+        }
+        
+        // verify password
+        const isMatch = await bcrypt.compare(password, seller.password!); //! says that ik user.password isnt null, it is string, 
+        // eearlier it was giving error thinking it could be null, and bcrypt.compare method cant compare with null values 
+        if(!isMatch){
+            return next(new AuthError("Incorrect email or password!"));
+        }
+
+        // generate access and refresh tokens
+        const accessToken = jwt.sign(
+            {id: seller.id, role: "seller"}, 
+            process.env.ACCESS_TOKEN_SECRET as string,
+            {
+                expiresIn: "15m",
+            }    
+        );
+        const refreshToken = jwt.sign(
+            {id: seller.id, role: "seller"}, 
+            process.env.REFRESH_TOKEN_SECRET as string,
+            {
+                expiresIn: "7d",
+            }    
+        );
+
+        // store the refresh and access token in an httpOnly secure cookie - as this is a microservices project and the 
+        // main website is on lets say tradeport.com then seller website is on seller.tradeport.com , so, if user logs in the same 
+        // system then seller will automatically logout because the cookie name is same - access_token and refresh_token, hence we will use different cookie names
+        setCookie(res, "seller_refresh_token", refreshToken);
+        setCookie(res, "seller_access_token", accessToken);
+
+        res.status(200).json({
+            message: "Login Successful",
+            user: {id: seller.id, email: seller.email, name: seller.name}
+        });
+
+    } catch (error) {
+        return next(error);
+    }
+}
+
+// get loggedin seller
+export const getSeller = async (req: any, res: Response, next: NextFunction) => {
+    try {
+        const seller = req.seller;
+        res.status(201).json({
+            success: true,   
+            seller,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 

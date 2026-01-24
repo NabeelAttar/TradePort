@@ -4,7 +4,7 @@ import Jwt from "jsonwebtoken";
 
 const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
     try { 
-        const token = req.cookies.access_token || req.headers.authorization?.split(" ")[1]; //the later one is for our testing mechanism
+        const token = req.cookies["access_token"] || req.cookies["seller_access_token"] || req.headers.authorization?.split(" ")[1]; //the later one is for our testing mechanism
         if(!token){
             return res.status(401).json({message: "Unauthorized. Token missing."});
         }
@@ -15,12 +15,23 @@ const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
             return res.status(401).json({message: "Unauthorized. Invalid Token."});
         }
 
-        const user = await prisma.users.findUnique({where : { id : decoded.id }});
-        req.user = user;
+        let account;
+        if(decoded.role === "user"){
+           account = await prisma.users.findUnique({where : {id : decoded.id}});
+           req.user = account; 
+        } else if(decoded.role === "seller"){
+           account = await prisma.sellers.findUnique({
+            where : {id : decoded.id},
+            include: {shop: true},
+           });
+           req.seller = account;
+        }
 
-        if(!user){
+        if(!account){
             return res.status(401).json({message : "Account not found!"});
         }
+
+        req.role = decoded.role;
 
         return next();
 

@@ -1,12 +1,13 @@
 "use client";
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import React, { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Eye, EyeOff } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { countries } from 'apps/seller-ui/src/utils/coutnries';
+import CreateShop from 'apps/seller-ui/src/shared/modules/auth/create-shop';
+import StripeLogo from 'apps/seller-ui/src/assests/svgs/stripe-logo';
 
 const Signup = () => {
     const [activeStep, setActiveStep] = useState(1);
@@ -18,8 +19,6 @@ const Signup = () => {
     const [sellerData, setSellerData] = useState<FormData | null>(null);
     const [sellerId, setSellerId] = useState("");
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-    const router = useRouter();
 
     const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -92,6 +91,17 @@ const Signup = () => {
             signupMutation.mutate(sellerData)
         }
     }
+
+     const connectStripe = async () => {
+        try {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_URI}/api/create-stripe-link`, {sellerId});
+            if(response.data.url){
+                window.location.href = response.data.url;
+            }
+        } catch (error) {
+            console.log("Stripe Connection error: ", error);
+        }
+     }
 
     return (
         <div className="w-full flex flex-col items-center pt-10 min-h-screen">
@@ -259,6 +269,25 @@ const Signup = () => {
                                 )}
                             </div>
                         )}
+                    </div>
+                )}
+
+                {activeStep === 2 && (
+                    <CreateShop sellerId={sellerId} setActiveStep={setActiveStep} />
+                )}
+
+                {activeStep === 3 && (
+                    <div className='text-center '>
+                        <h3 className='text-2xl font-semibold '>
+                            Withdraw Method
+                        </h3>
+                        <br />
+                        <button 
+                            className='w-full m-auto flex items-center justify-center gap-3 text-lg bg-[#334155] text-white py-2 rounded-lg'
+                            onClick={connectStripe}
+                        >
+                            Connect Stripe <StripeLogo/>
+                        </button>
                     </div>
                 )}
             </div>

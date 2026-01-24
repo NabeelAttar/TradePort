@@ -30,6 +30,7 @@
     "react-dom": "19.0.0",
     "react-hook-form": "^7.71.1",
     "react-hot-toast": "^2.6.0",
+    "stripe": "^20.2.0",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1"
   },
