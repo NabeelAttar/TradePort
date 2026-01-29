@@ -82,7 +82,7 @@ const CreateShop = ({ sellerId, setActiveStep }: { sellerId: string, setActiveSt
                     <p className='text-red-500 text-sm'>{String(errors.opening_hours.message)}</p>
                 )}
 
-                <label className='block text-gray-700 mb-1'>Website *</label>
+                <label className='block text-gray-700 mb-1'>Website </label>
                 <input
                     type='url'
                     placeholder='https://example.com'

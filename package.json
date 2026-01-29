@@ -26,6 +26,7 @@
     "morgan": "^1.10.1",
     "next": "~15.1.4",
     "nodemailer": "^7.0.12",
+    "razorpay": "^2.9.6",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-hook-form": "^7.71.1",

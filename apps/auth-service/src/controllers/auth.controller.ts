@@ -6,7 +6,6 @@ import { AuthError, ValidationError } from '@packages/error-handler';
 import bcrypt from 'bcryptjs';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken'
 import { setCookie } from '../utils/cookies/setCookie';
-import Stripe from 'stripe';
 
 
 // register a new user 
@@ -53,7 +52,7 @@ export const verifyUser = async (req: Request, res: Response, next: NextFunction
         const hashedPassword = await bcrypt.hash(password, 10);
         
         // create account as all security checks are done
-        const user = await prisma.users.create({
+        await prisma.users.create({
             data: {name, email, password: hashedPassword},
         });
         
@@ -301,47 +300,81 @@ export const createShop = async (req: Request, res: Response, next: NextFunction
     }
 }
 
-// setup stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: "2025-12-15.clover",
-})
-// create stripe account link for seller
-export const createStripeConnectLink = async (req: Request, res: Response, next: NextFunction) => {
+// Utility function to generate unique bank account ID
+// This mocks what Stripe's accounts.create() does - creates a unique identifier for the account
+const generateBankAccountId = (): string => {
+    // Format: bank_<timestamp>_<random>
+    // Similar to Stripe's account IDs like "acct_1234567890"
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 9).toUpperCase();
+    return `bank_${timestamp}_${random}`;
+};
+
+// create bank account for seller (replaces Stripe Connect)
+export const createBankAccount = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const {sellerId} = req.body;
-        if(!sellerId){
-            return next(new ValidationError("Seller ID is required!"));
-        }
-
-        const seller = await prisma.sellers.findUnique({where : {id : sellerId}});
-        if(!seller){
-            return next(new ValidationError("Seller is not available with this ID!"));
-        }
+        const { sellerId, bankAccountCountry, accountCurrency, accountNumber } = req.body;
         
-        const account = await stripe.accounts.create({
-            type: "express",
-            email: seller?.email,
-            country: "GB",
-            capabilities: {
-                card_payments: {requested: true},
-                transfers: {requested: true},
-            }
-        })
+        if (!sellerId || !bankAccountCountry || !accountCurrency || !accountNumber) {
+            return next(new ValidationError("All fields are required!"));
+        }
 
-        await prisma.sellers.update({
-            where : {id: sellerId}, 
-            data: {stripeId: account.id}
+        // Validate account number is 8 digits
+        if (!/^\d{8}$/.test(accountNumber)) {
+            return next(new ValidationError("Account number must be 8 digits!"));
+        }
+
+        const seller = await prisma.sellers.findUnique({ where: { id: sellerId } });
+        if (!seller) {
+            return next(new AuthError("Seller not found"));
+        }
+
+        // Mock: Generate bank account ID (similar to stripe.accounts.create())
+        // This represents creating an "account" in a payment system
+        const bankAccountId = generateBankAccountId();
+
+        // Update seller with bank account information
+        const updatedSeller = await prisma.sellers.update({
+            where: { id: sellerId },
+            data: {
+                bankId: bankAccountId, // Store our generated bank account ID
+                bankAccountNumber: accountNumber,
+                bankAccountCountry: bankAccountCountry,
+                accountCurrency: accountCurrency,
+                bankAccountStatus: "pending", // Status starts as pending, will be verified after KYC
+            },
         });
 
-        const accountLink = await stripe.accountLinks.create({
-            account: account.id,
-            refresh_url: `http://localhost:3000/success`,
-            return_url: `http://localhost:3000/success`,
-            type: "account_onboarding", 
-        })
+        if (!updatedSeller) {
+            return next(new ValidationError("Failed to update seller with bank account"));
+        }
 
-        res.json({url : accountLink.url});
+        // Mock: Create account link response (similar to stripe.accountLinks.create())
+        // This is a response object only, not stored in DB. It indicates successful account creation.
+        // The actual bankAccountStatus is stored in the sellers collection.
+        const accountLink = {
+            id: `link_${bankAccountId}`,
+            object: "account_link",
+            created: Date.now(),
+            expires_at: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+            url: `${process.env.FRONTEND_URI || "http://localhost:3000"}/success`,
+            type: "account_onboarding",
+            status: "complete", // Response status (not DB status)
+        };
 
+        res.status(201).json({
+            success: true,
+            message: "Bank account connected successfully",
+            accountLink: {
+                url: accountLink.url,
+            },
+            seller: {
+                id: updatedSeller.id,
+                name: updatedSeller.name,
+                email: updatedSeller.email,
+                bankAccountId: bankAccountId,
+            },
+        });
     } catch (error) {
         return next(error);
     }
