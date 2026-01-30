@@ -86,6 +86,9 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
             return next(new AuthError("Incorrect email or password!"));
         }
 
+        res.clearCookie("seller_access_token");
+        res.clearCookie("seller_refresh_token");
+
         // generate access and refresh tokens
         const accessToken = jwt.sign(
             {id: user.id, role: "user"}, 
@@ -117,7 +120,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 }
 
 // refresh token user
-export const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+export const refreshToken = async (req: any, res: Response, next: NextFunction) => {
     try {
         const refreshToken = req.cookies["refresh_token"] || req.cookies["seller_refresh_token"] || req.headers.authorization?.split(" ")[1];
         if(!refreshToken){
@@ -150,6 +153,7 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
         }else if(decoded.role==="seller"){
             setCookie(res, "seller_access_token", newAccessToken);
         }
+        req.role = decoded.role;
         
         return res.status(201).json({ success: true });
         
@@ -411,6 +415,9 @@ export const loginSeller = async (req: Request, res: Response, next: NextFunctio
         if(!isMatch){
             return next(new AuthError("Incorrect email or password!"));
         }
+
+        res.clearCookie("access_token");
+        res.clearCookie("refresh_token");
 
         // generate access and refresh tokens
         const accessToken = jwt.sign(
