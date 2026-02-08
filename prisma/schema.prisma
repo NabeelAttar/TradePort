@@ -61,20 +61,25 @@ model shops {
 }
 
 model sellers {
-  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
-  name                String
-  email               String   @unique
-  phone_number        String
-  country             String
-  password            String
-  bankId              String?  // Unique bank account ID generated for each seller
-  bankAccountNumber   String?
-  bankAccountCountry  String?
-  accountCurrency     String?
-  bankAccountStatus   String   @default("pending") // pending, verified, active
-  shop                shops?
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  email              String   @unique
+  phone_number       String
+  country            String
+  password           String
+  bankId             String? // Unique bank account ID generated for each seller
+  bankAccountNumber  String?
+  bankAccountCountry String?
+  accountCurrency    String?
+  bankAccountStatus  String   @default("pending") // pending, verified, active
+  shop               shops?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
 
-// model products
+// model site_config
+model site_config {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  categories    String[]
+  subCategories Json
+}
