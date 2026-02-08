@@ -1,3 +1,5 @@
+'use client';
+
 import SidebarWrapper from 'apps/seller-ui/src/shared/components/SidebarWrapper'
 import React from 'react'
 
