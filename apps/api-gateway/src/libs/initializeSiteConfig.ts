@@ -11,7 +11,7 @@ const initializeSiteConfig = async() => {
                     categories: [
                         "Electronics",
                         "Fashion",
-                        "Home Kitchen",
+                        "Home & Kitchen",
                         "Sports & Fitness",
                     ],
                     subCategories: {

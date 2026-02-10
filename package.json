@@ -33,6 +33,7 @@
     "react-dom": "19.0.0",
     "react-hook-form": "^7.71.1",
     "react-hot-toast": "^2.6.0",
+    "react-quill-new": "^3.8.3",
     "stripe": "^20.2.0",
     "styled-components": "^6.3.8",
     "swagger-autogen": "^2.23.7",
