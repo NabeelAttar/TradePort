@@ -1,3 +1,4 @@
+import { NotFoundError, ValidationError } from "@packages/error-handler";
 import prisma from "@packages/libs/prisma";
 import { NextFunction, Request, Response } from "express";
 
@@ -12,6 +13,80 @@ export const getCategories = async(req: Request, res: Response, next: NextFuncti
         return res.status(200).json({
             categories: config.categories,
             subCategories: config.subCategories
+        })
+    } catch (error) {
+        return next(error);
+    }
+}
+
+// create discount codes
+export const createDiscountCode = async(req: any, res:Response, next:NextFunction) => {
+    try {
+        const {public_name, discountType, discountValue, discountCode} = req.body;
+
+        const doesDiscountCodeExist = await prisma.discount_codes.findUnique({where: {discountCode}});
+        if(doesDiscountCodeExist){
+            return next(new ValidationError("Discount code already in use. Please use a different discount code"));
+        }
+
+        const discount_code = await prisma.discount_codes.create({
+            data: {
+                public_name,
+                discountType,
+                discountValue: parseFloat(discountValue),
+                discountCode,
+                sellerId: req.seller.id,
+            }
+        })
+
+        return res.status(200).json({
+            success: true,
+            discount_code,
+        });
+
+    } catch (error) {
+        return next(error);
+    }
+}
+
+// get discount codes
+export const getDiscountCodes = async(req: any, res: Response, next:NextFunction) => {
+    try {
+        const discount_codes = await prisma.discount_codes.findMany({where: {sellerId: req.seller.id}});
+        
+        return res.status(201).json({
+            success: true,
+            discount_codes,
+        }) 
+
+    } catch (error) {
+        return next(error);
+    }
+}
+
+// delete discount code
+export const deleteDiscountCode = async(req: any, res: Response, next: NextFunction) => {
+    try {
+        const {id} = req.params;
+        const sellerId = req.seller.id;
+
+        const discountCode = await prisma.discount_codes.findUnique({
+            where: {id},
+            select: { id: true, sellerId: true },
+        })
+
+        if(!discountCode){
+            return next(new NotFoundError("Discount code Not Found"));
+        }
+
+        if(discountCode.sellerId !== sellerId){
+            return next(new ValidationError("Unauthorized access!"));
+        }
+
+        await prisma.discount_codes.delete({where: {id}});
+
+        return res.status(200).json({
+            message: "Discount code successfully deleted."
         })
     } catch (error) {
         return next(error);

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import ImagePLaceHolder from 'apps/seller-ui/src/shared/components/image-placeholder';
 import axiosInstance from 'apps/seller-ui/src/utils/axiosInstance';
 import { ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 import ColorSelector from 'packages/components/colorselector';
 import CustomProperties from 'packages/components/customproperties';
 import CustomSpecifications from 'packages/components/customspecifications';
@@ -93,7 +94,7 @@ const page = () => {
             Create Product
         </h2>
         <div className='flex items-center '>
-            <span className='text-[#80DEEA] cursor-pointer'>Dashboard</span>
+            <Link href={"/dashboard"} className='text-[#80DEEA] cursor-pointer'>Dashboard</Link>
             <ChevronRight className='opacity-[0.8]' size={20}/>
             <span>Create Product</span>
         </div>
