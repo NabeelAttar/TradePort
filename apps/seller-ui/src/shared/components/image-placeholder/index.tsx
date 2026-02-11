@@ -3,7 +3,7 @@ import Image from 'next/image';
 import React, { useState } from 'react'
 
 const ImagePLaceHolder = ({ 
-    size, small, onImageChange, onRemove, defaultImage = null, index = null, setOpenImageModal
+    size, small, onImageChange, onRemove, defaultImage = null, index = null, setOpenImageModal, setSelectedImage, setOriginalImage, images, pictureLoader
 }:{
     size:string, 
     small?: boolean,
@@ -11,7 +11,11 @@ const ImagePLaceHolder = ({
     onRemove?: (index:number) => void, 
     defaultImage?: string | null, 
     index?: any, 
-    setOpenImageModal: (openImageModal:boolean) => void
+    setOpenImageModal: (openImageModal:boolean) => void,
+    setSelectedImage: (e:string) => void,
+    setOriginalImage: (e:string) => void,
+    images:any,
+    pictureLoader:boolean,
 }) => {
 
   const [imagePreview, setImagePreview] = useState<string | null>(defaultImage);
@@ -32,12 +36,18 @@ const ImagePLaceHolder = ({
       <input type="file" accept='image/*' className='hidden' id={`image-upload-${index}`} onChange={handleFileChange} />
       {imagePreview ? (
         <>
-          <button type="button" onClick={() => onRemove?.(index!)} className='absolute top-3 right-3 p-2 !rounded bg-red-600 shadow-lg'>
+          <button type="button" disabled={pictureLoader} onClick={() => onRemove?.(index!)} className='absolute top-3 right-3 p-2 !rounded bg-red-600 shadow-lg'>
             <X size={16} />
           </button>
           <button 
+            disabled={pictureLoader}
+            type='button'
             className='absolute top-3 right-[70px] p-2 !rounded bg-blue-500 shadow-lg cursor-pointer' 
-            onClick={()=>setOpenImageModal(true)}
+            onClick={()=> {
+              setOpenImageModal(true);
+              setSelectedImage(images[index].file_url)
+              setOriginalImage(images[index].file_url)
+            }}
           >
             <WandSparkles size={16}/>
           </button>

@@ -2,9 +2,11 @@
 
 import { useQuery } from '@tanstack/react-query';
 import ImagePLaceHolder from 'apps/seller-ui/src/shared/components/image-placeholder';
+import { enhancements } from 'apps/seller-ui/src/utils/AI.enhancements';
 import axiosInstance from 'apps/seller-ui/src/utils/axiosInstance';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Wand, X } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import ColorSelector from 'packages/components/colorselector';
 import CustomProperties from 'packages/components/customproperties';
 import CustomSpecifications from 'packages/components/customspecifications';
@@ -13,14 +15,27 @@ import RichTextEditor from 'packages/components/rich-text-editor';
 import SizeSelector from 'packages/components/size-selector';
 import React, { useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import toast from 'react-hot-toast';
+
+interface UploadedImage {
+    fileId: string;
+    file_url: string;
+}
 
 const page = () => {
     
     const {register, control, watch, setValue, handleSubmit, formState: {errors}} = useForm();
+    const [selectedImage, setSelectedImage] = useState("");
+    const [pictureLoader, setPictureLoader] = useState(false);
+    const [activeEffect, setActiveEffect] = useState<string | null>(null);
+    const [processing, setProcessing] = useState(false);
+    const [originalImage, setOriginalImage] = useState("");
     const [openImageModal, setOpenImageModal] = useState(false);
     const [isChanged, setIsChanged] = useState(true);
-    const [images, setImages] = useState<(File | null)[]>([null]);
+    const [images, setImages] = useState<(UploadedImage | null)[]>([null]);
     const [loading, setLoading] = useState(false);
+
+    const router = useRouter();
 
     const {data, isLoading, isError} = useQuery({
         queryKey: ["categories"],
@@ -37,6 +52,14 @@ const page = () => {
         retry: 2,
     })
 
+    const {data: discountCodes = [], isLoading: discountLoading} = useQuery({
+        queryKey: ["shop-discounts"],
+        queryFn: async() => {
+            const res = await axiosInstance.get("/product/api/get-discount-codes")
+            return res?.data?.discount_codes || [];
+        }
+    })
+
     const categories = data?.categories || [];
     const subCategories = data?.subCategories || {};
     
@@ -47,38 +70,96 @@ const page = () => {
         return selectedCategory ? subCategories[selectedCategory] || [] : [];
     }, [selectedCategory, subCategories]);
 
-    const onSubmit = (data:any) => {
-        console.log(data);
+    const onSubmit = async(data:any) => {
+        try {
+            setLoading(true);
+            await axiosInstance.post("/product/api/create-product", data)
+            router.push("/dashboard/all-products");
+        } catch (error:any) {
+            toast.error(error?.data?.message)
+        } finally{
+            setLoading(false);
+        }
     } 
-    
-    const handleImageChange = (file: File | null, index: number) => {
-        const updateImages = [...images]
-        updateImages[index] = file;
-        if(index === images.length - 1 && images.length < 8){ 
-            // allowing 8 images per product
-            updateImages.push(null);
-        } 
-        setImages(updateImages);
-        setValue("images", updateImages);
-    }
 
-    const handleRemoveImage = (index: number) => {
-        setImages((prevImages) => {
-            let updatedImages = [...prevImages]
-            if(index === -1){
-                updatedImages[0] = null;
-            }else {
-                updatedImages.splice(index, 1);
+    const converFileToBase64 = (file:File) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        })
+    }
+    
+    const handleImageChange = async(file: File | null, index: number) => {
+        if(!file) return;
+        setPictureLoader(true);
+
+        try {
+            const fileName = await converFileToBase64(file)
+            const response = await axiosInstance.post("/product/api/upload-product-image", {fileName});
+            
+            const uploadedImage:UploadedImage= {
+                fileId: response.data.fileId,
+                file_url: response.data.file_url,
+            }
+            const updatedImages = [...images]
+            updatedImages[index] = uploadedImage
+            if(index === images.length - 1 && updatedImages.length < 8){
+                updatedImages.push(null);
             }
 
+            setImages(updatedImages);
+            setValue("images", updatedImages)
+
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setPictureLoader(false)
+        }
+    }
+
+    const handleRemoveImage = async(index: number) => {
+        try {
+            const updatedImages = [...images];
+
+            const imageToDelete = updatedImages[index];
+            if(imageToDelete && typeof imageToDelete === "object"){
+                await axiosInstance.delete("/product/api/delete-product-image", {
+                    data: {
+                        fileId: imageToDelete.fileId,
+                    }
+                });
+            }
+
+            updatedImages.splice(index,  1);
+
+            // add null placeholder
             if(!updatedImages.includes(null) && updatedImages.length < 8){
                 updatedImages.push(null);
             }
 
-            return updatedImages;
-        })
+            setImages(updatedImages);
+            setValue("images", updatedImages);
+             
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
-        setValue("images", images);
+    const applyTransformations = async(transformation: string) => {
+        if(!originalImage || processing) return;
+        setProcessing(true);
+        setActiveEffect(transformation);
+
+        try {
+            const transformedUrl = `${originalImage}?tr=${transformation}&t=${Date.now()}`;
+            setSelectedImage(transformedUrl);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setProcessing(false);
+        }
     }
 
     const handleSaveDraft = () => {
@@ -106,10 +187,14 @@ const page = () => {
                 {images.length > 0 && (
                     <ImagePLaceHolder 
                     setOpenImageModal={setOpenImageModal} 
+                    images={images}
                     size='765*850' 
                     small={false} 
                     index={0} 
                     onImageChange={handleImageChange} 
+                    setSelectedImage={setSelectedImage}
+                    setOriginalImage={setOriginalImage}
+                    pictureLoader={pictureLoader}
                     onRemove={handleRemoveImage}
                     />
                 )}
@@ -117,11 +202,15 @@ const page = () => {
                     {images.slice(1).map((_, index) => (
                         <ImagePLaceHolder 
                         setOpenImageModal={setOpenImageModal} 
+                        images={images}
                         size='765*850' 
                         small={true} 
                         key={index}
                         index={index + 1} 
                         onImageChange={handleImageChange} 
+                        setSelectedImage={setSelectedImage}
+                        setOriginalImage={setOriginalImage}
+                        pictureLoader={pictureLoader}
                         onRemove={handleRemoveImage}
                         />
                     ))}
@@ -153,7 +242,7 @@ const page = () => {
                                 cols={10}
                                 label='Short Description* (Max 150 words)'
                                 placeholder='Enter product description for quick view'
-                                {...register("description", {
+                                {...register("short_description", {
                                     required: "Description is required",
                                     validate: (value) => {
                                         const wordCount = value.trim().split(/\s+/).length;
@@ -163,9 +252,9 @@ const page = () => {
                                     }
                                 })}
                             />
-                            {errors.description && (
+                            {errors.short_description && (
                                 <p className='text-red-500 text-xs mt-1'>
-                                    {errors.description.message as string}
+                                    {errors.short_description.message as string}
                                 </p>
                             )}
                         </div>
@@ -354,7 +443,7 @@ const page = () => {
                                     validate: (value) => {
                                         const wordCount = value?.split(/\s+/).filter((word : string) =>word).length
                                         return (
-                                            wordCount >= 100 || "Description must be atleast 100 words"
+                                            wordCount < 100 || "Description must be atleast 100 words"
                                         );
                                     },
                                 }}
@@ -464,11 +553,75 @@ const page = () => {
                             <label className='block font-semibold text-gray-300 mb-1'>
                                 Select Discount Codes (optional)
                             </label>
+
+                            {discountLoading ? (
+                                <p className='text-gray-400'>
+                                    Loading discount codes...
+                                </p>
+                            ) : (
+                                <div className='flex flex-wrap gap-2'>
+                                    {discountCodes.map((discount:any) => (
+                                        <button 
+                                            className={`px-3 py-1 rounded-md text-sm font-semibold border ${watch("discountCodes")?.includes(discount.id) ? "bg-blue-600 text-white border-blue-600" : "bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700"}`} 
+                                            key={discount.id} 
+                                            type='button'
+                                            onClick={() => {
+                                                const currentSelection = watch("discountCodes") || [];
+                                                const updatedSelection = currentSelection?.includes(discount.id) ? currentSelection.filter((id:string) => id !== discount.id) : [...currentSelection, discount.id]
+                                                setValue("discountCodes", updatedSelection);
+                                            }}
+                                        >
+                                            {discount.public_name} ({discount.discountValue}{discount.discountType === "percentage" ? "%" : "₹"})
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        {openImageModal && (
+            <div className='fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-60 z-50'>
+                <div className='bg-gray-800 p-6 rounded-lg w-[450px] text-white'>
+                    <div className='flex justify-between items-center pb-3 mb-4'>
+                        <h2 className='text-lg font-semibold'> 
+                            Enhance Produt Image
+                        </h2>
+                        <X size={20} className='cursor-pointer' onClick={() => setOpenImageModal(!openImageModal)} />
+                    </div>
+                    <div className='relative w-full h-[250px] rounded-md overflow-hidden border border-gray-600'>
+                        <img
+                            src={selectedImage}
+                            alt="product-image"
+                            className="w-full h-full object-contain"
+                        />
+
+                    </div>
+
+                    {selectedImage && (
+                        <div className='mt-4 space-y-2'>
+                            <h3 className='text-white text-sm font-semibold'>AI Enhancements</h3>
+                            <div className='grid grid-cols-2 gap-3 max-h-[250px] overflow-y-auto'>
+                                {enhancements?.map(({label, effect}) => (
+                                    <button 
+                                        key={effect}  
+                                        type='button'
+                                        className={`p-2 rounded-md flex items-center gap-2 ${activeEffect === effect ? "bg-blue-600 text-white" : "bg-gray-700 hover:bg-gray-600"}`} 
+                                        onClick={() => applyTransformations(effect)}
+                                        disabled={processing}
+                                    >
+                                        <Wand size={18}/>
+                                        {label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        )}
 
         <div className='mt-6 flex justify-end gap-3'>
             {isChanged && (
