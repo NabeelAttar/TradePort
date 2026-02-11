@@ -129,6 +129,7 @@ export const deleteProductImage = async(req: Request, res: Response, next: NextF
     }
 }
 
+// create product
 export const createProduct = async(req:any, res:Response, next:NextFunction) => {
     try {
         const {title, short_description, detailed_description, warranty, custom_specifications, slug, tags, cash_on_delivery, brand, video_url, category, colors =[], sizes =[], discountCodes, stock, sale_price, regular_price, subCategory, custom_properties=[], images=[]} = req.body;
@@ -186,5 +187,113 @@ export const createProduct = async(req:any, res:Response, next:NextFunction) => 
 
     } catch (error) {
         return next(error)
+    }
+}
+
+// get logged in seller products
+export const getShopProducts = async(req: any, res:Response, next:NextFunction) => {
+    try {
+        const products = await prisma.products.findMany({
+            where: {
+                shopId: req?.seller?.shop?.id
+            },
+            include: {
+                images: true
+            },
+        })
+
+        res.status(201).json({
+            success: true,
+            products
+        })
+
+    } catch (error) {
+        return next(error);
+    }
+}
+
+// delete product
+export const deleteProduct = async(req:any, res: Response, next: NextFunction) => {
+    try {
+        const {productId} = req.params;
+        const sellerId = req.seller?.shop?.id;
+
+        const product = await prisma.products.findUnique({
+            where: {id: productId},
+            select: {id: true, shopId: true, isDeleted: true}
+        })
+        if(!product){
+            return next(new ValidationError("Product not found."))
+        }
+
+        if(product.shopId !== sellerId){
+            return next(new ValidationError("Unauthorized action."))
+        }
+
+        if(product.isDeleted){
+            return next(new ValidationError("Product is already deleted."))
+        }
+
+        const deletedProduct = await prisma.products.update({
+            where: {id: productId},
+            data: {
+                isDeleted: true,
+                deletedAt: new Date(Date.now() + 24*60*60*1000)
+            }
+        })
+
+        return res.status(200).json({
+            message: "Product is scheduled for deletion in 24 hours. You can restore it within this time.",
+            deletedAt: deletedProduct.deletedAt,
+        })
+
+        // after this too the product will still be not deleted from the mongodb database, cuz we are not instantly deleting
+        // we are deleting after 24 hours, thats why we will use chronjobs which lets us delete all products from the database
+        // at a specific time of the day say midnight, so, at midnight for whatever products the deletedAt value will be less than 
+        // Date.now() will be deleted from the database 
+
+    } catch (error) {
+        return next(error);
+    }
+}
+
+// restore product
+export const restoreProduct = async(req: any, res: Response, next: NextFunction) => {
+    try {
+        const {productId} = req.params;
+        const sellerId = req.seller?.shop?.id;
+
+        const product = await prisma.products.findUnique({
+            where: {id: productId},
+            select: {id: true, shopId: true, isDeleted: true}
+        })
+        if(!product){
+            return next(new ValidationError("Product not found."))
+        }
+
+        if(product.shopId !== sellerId){
+            return next(new ValidationError("Unauthorized action."))
+        }
+
+        if(!product.isDeleted){
+            return res.status(400).json({
+                message: "Product is not in deleted state."
+            })
+        }
+
+        await prisma.products.update({
+            where: {id: productId},
+            data: {
+                isDeleted: false,
+                deletedAt: null
+            }
+        })
+
+        return res.status(200).json({
+            message: "Product successfully restored.",
+        })
+
+    } catch (error) {
+        return next(error);
     }
 }
