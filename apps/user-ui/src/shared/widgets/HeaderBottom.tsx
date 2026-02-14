@@ -5,11 +5,14 @@ import { navItems } from '../../configs/constants';
 import Link from 'next/link';
 import ProfileIcon from '../../assets/svgs/ProfileIcon';
 import useUser from '../../hooks/useUser';
+import { useStore } from '../../app/stores';
 
 const HeaderBottom = () => {
     const [show, setShow] = useState(false);
     const [isSticky, setIsSticky] = useState(false);
     const {user, isLoading} = useUser(); 
+    const wishlist = useStore((state:any) => state.wishlist);
+    const cart = useStore((state:any) => state.cart);
 
     // track scroll position
     useEffect(() => {
@@ -85,13 +88,13 @@ const HeaderBottom = () => {
                                 <Link href={"/wishlist"} className='relative'>
                                     <HeartIcon/>
                                     <div className='w-6 h-6 border-2 border-white bg-red-500 rounded-full flex items-center justify-center absolute top-[-10px] right-[-10px]'>
-                                        <span className='text-white font-medium text-sm'>0</span>
+                                        <span className='text-white font-medium text-sm'>{wishlist.length}</span>
                                     </div>
                                 </Link>
                                 <Link href={"/cart"} className='relative'>
                                     <ShoppingCart/>
                                     <div className='w-6 h-6 border-2 border-white bg-red-500 rounded-full flex items-center justify-center absolute top-[-10px] right-[-10px]'>
-                                        <span className='text-white font-medium text-sm'>0</span>
+                                        <span className='text-white font-medium text-sm'>{cart.length}</span>
                                     </div>
                                 </Link>
                             </div>

@@ -3,10 +3,28 @@ import React, { useEffect, useState } from 'react'
 import Ratings from '../Ratings';
 import { Eye, Heart, ShoppingBag } from 'lucide-react';
 import ProductDetailsCard from './ProductDetailsCard';
+import { useStore } from 'apps/user-ui/src/app/stores';
+import useUser from 'apps/user-ui/src/hooks/useUser';
+import useLocationTracking from 'apps/user-ui/src/hooks/useLocationTracking';
+import useDeviceTracking from 'apps/user-ui/src/hooks/useDeviceTracking';
 
 const ProductCard = ({product, isEvent}:{product:any; isEvent?: boolean}) => {
     const [timeLeft, setTimeLeft] = useState("");
     const [open, setOpen] = useState(false);
+
+    const addToCart = useStore((state:any) => state.addToCart);
+    const addToWishlist = useStore((state:any) => state.addToWishlist);
+    const removeFromWishlist = useStore((state:any) => state.removeFromWishlist);
+
+    const wishlist = useStore((state:any) => state.wishlist);
+    const isWishlisted = wishlist.some((item:any) => item.id === product.id);
+    
+    const cart = useStore((state:any) => state.cart);
+    const isInCart = cart.some((item:any) => item.id === product.id);
+
+    const { user } = useUser();
+    const location = useLocationTracking();
+    const deviceInfo = useDeviceTracking();
 
     useEffect(() => {
         if(isEvent && product?.ending_date){
@@ -90,13 +108,13 @@ const ProductCard = ({product, isEvent}:{product:any; isEvent?: boolean}) => {
 
         <div className='absolute z-10 flex flex-col gap-3 right-3 top-10'>
             <div className='bg-white rounded-full p-[6px] shadow-md'>
-                <Heart size={22} className='cursor-pointer hover:scale-110 transition' fill={"red"} stroke='red'/>
+                <Heart size={22} onClick={() => isWishlisted ? removeFromWishlist(product.id, user, location, deviceInfo) : addToWishlist({...product, quantity: 1}, user, location, deviceInfo)} fill={isWishlisted ? "red" : "transparent"} className='cursor-pointer hover:scale-110 transition' stroke={isWishlisted ? "red" : "#4b5563"} />
             </div>
             <div className='bg-white rounded-full p-[6px] shadow-md'>
                 <Eye onClick={() => setOpen(!open)} size={22} className='cursor-pointer text-[#4b5563] hover:scale-110 transition'/>
             </div>
             <div className='bg-white rounded-full p-[6px] shadow-md'>
-                <ShoppingBag size={22} className='cursor-pointer text-[#4b5563] hover:scale-110 transition'/>
+                <ShoppingBag size={22} onClick={() => !isInCart && addToCart({...product, quantity: 1}, user, location, deviceInfo)} className='cursor-pointer text-[#4b5563] hover:scale-110 transition'/>
             </div>
         </div>
 
