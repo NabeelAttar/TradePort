@@ -133,7 +133,7 @@ export const deleteProductImage = async (req: Request, res: Response, next: Next
 // create product
 export const createProduct = async (req: any, res: Response, next: NextFunction) => {
     try {
-        const { title, short_description, detailed_description, warranty, custom_specifications, slug, tags, cash_on_delivery, brand, video_url, category, colors = [], sizes = [], discountCodes, stock, sale_price, regular_price, subCategory, custom_properties = [], images = [] } = req.body;
+        const { title, short_description, detailed_description, warranty, custom_specifications, slug, tags, cash_on_delivery, brand, video_url, category, colors = [], sizes = [], discountCodes, stock, sale_price, regular_price, subCategory, custom_properties = [], starting_date, ending_date, images = [] } = req.body;
         if (!title || !slug || !short_description || !category || !subCategory || !sale_price || !images || !tags || !stock || !regular_price) {
             return next(new ValidationError("MIssing required Fields"));
         }
@@ -169,6 +169,8 @@ export const createProduct = async (req: any, res: Response, next: NextFunction)
                 regular_price: parseFloat(regular_price),
                 custom_properties: custom_properties || {},
                 custom_specifications: custom_specifications || {},
+                starting_date: starting_date ? starting_date : null,
+                ending_date: ending_date ? ending_date : null,
                 images: {
                     create: images
                         .filter((image: any) => image && image.fileId && image.file_url)
