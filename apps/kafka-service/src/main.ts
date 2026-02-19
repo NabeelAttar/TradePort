@@ -1,4 +1,9 @@
 // kafka service is not like rest api, its a message broker, so we dont need a traditional api setup here
+import 'dotenv/config';
+
+console.log("KAFKA KEY:", process.env.KAFKA_API_KEY);
+console.log("KAFKA SECRET:", process.env.KAFKA_API_SECRET);
+
 import { kafka } from '@packages/utils/kafka'
 import { updateUserAnalytics } from './services/analytics-service'
 
