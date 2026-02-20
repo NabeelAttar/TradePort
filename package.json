@@ -4,8 +4,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "node start-dev.js",
-    "user-ui": "nx serve @trade-port/user-ui",
-    "seller-ui": "nx serve @trade-port/seller-ui"
+    "user-ui": "nx dev @trade-port/user-ui",
+    "seller-ui": "nx dev @trade-port/seller-ui"
   },
   "private": true,
   "dependencies": {

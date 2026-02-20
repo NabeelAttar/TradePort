@@ -29,15 +29,17 @@ model users {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   shopReviews    shopReviews[]
-  userAnalytics  userAnalytics?
 }
 
 model userAnalytics {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String    @unique @db.ObjectId
-  user        users     @relation(fields: [userId], references: [id])
-  lastVisited DateTime?
+  userId      String    @unique 
+  lastVisited DateTime
+  lastTrained DateTime?
   actions     Json?
+  country     String?
+  city     String?
+  device     String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
@@ -148,13 +150,11 @@ model products {
   shopId                String             @db.ObjectId
   Shop                  shops              @relation(fields: [shopId], references: [id])
   totalSales            Int                @default(0)
-  productAnalytics      productAnalytics?
 }
 
 model productAnalytics {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  productId     String    @unique @db.ObjectId
-  product       products  @relation(fields: [productId], references: [id])
+  productId     String    @unique
   shopId        String?   @db.ObjectId
   shop          shops?    @relation(fields: [shopId], references: [id])
   views         Int       @default(0)

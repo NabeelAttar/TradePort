@@ -5,7 +5,8 @@ export const updateUserAnalytics = async (event:any) => {
         const existingData = await prisma.userAnalytics.findUnique({
             where: {
                 userId: event.userId
-            }
+            },
+            select: { actions: true }
         })
 
         let updatedActions: any = existingData?.actions || [];

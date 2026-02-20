@@ -6,11 +6,18 @@ const useDeviceTracking = () => {
     const [deviceInfo, setDeviceInfo] = useState("");
 
     useEffect(() => {
-        const parser = new UAParser;
+        const parser = new UAParser();
         const result = parser.getResult();
 
-        // set deviceinfo only when component mounts
-        setDeviceInfo(`${result.device.type} || "Desktop" - ${result.os.name} ${result.os.version} - ${result.browser.name} ${result.browser.version}`)
+        const deviceType = result.device.type ?? "Desktop";
+        const osName = result.os.name ?? "";
+        const osVersion = result.os.version ?? "";
+        const browserName = result.browser.name ?? "";
+        const browserVersion = result.browser.version ?? "";
+
+        setDeviceInfo(
+            `${deviceType} - ${osName} ${osVersion} - ${browserName} ${browserVersion}`
+        );
 
     }, [])
 
