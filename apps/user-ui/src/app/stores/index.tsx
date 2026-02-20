@@ -56,7 +56,7 @@ export const useStore = create<Store>()(
                             cart: state.cart.map((item) => item.id === product.id ? {...item, quantity: (item.quantity ?? 1) + 1} : item)
                         }
                     }
-                    return {cart: [...state.cart, {...product, quantity: 1}]}
+                    return {cart: [...state.cart, {...product, quantity: product?.quantity}]}
                 })
 
                 // send our kafka event
