@@ -1,6 +1,7 @@
 import './global.css';
 import Provider from './Provider';
 import { Poppins } from 'next/font/google'
+import StyledComponentsRegistry from '../lib/StyledComponentsRegistry';
 
 export const metadata = {
   title: 'TradePort Seller',
@@ -21,9 +22,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`min-h-screen bg-slate-900 font-sans antialiased ${poppins.variable }`}>
-        <Provider>
-          {children}
-        </Provider>
+        <StyledComponentsRegistry>
+          <Provider>
+            {children}
+          </Provider>
+        </StyledComponentsRegistry>
       </body>
     </html>
   )

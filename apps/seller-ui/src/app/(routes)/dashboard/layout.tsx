@@ -1,6 +1,6 @@
 'use client';
 
-import SidebarWrapper from 'apps/seller-ui/src/shared/components/SidebarWrapper'
+import SidebarWrapper from '../../../shared/components/SidebarWrapper'
 import React from 'react'
 
 const Layout = ({children} : {children: React.ReactNode}) => {
