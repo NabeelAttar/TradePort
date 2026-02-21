@@ -153,7 +153,7 @@ export default function ProductDetails({ productDetails }: Props) {
     const [isSelected, setIsSelected] = useState(productDetails?.images?.[0] || "")
     const [isSizeSelected, setIsSizeSelected] = useState(productDetails?.sizes?.[0] || "")
     const [quantity, setQuantity] = useState(1);
-    const [priceRange, setPriceRange] = useState([productDetails?.sale_price, 1199,])
+    const [priceRange, setPriceRange] = useState([productDetails?.sale_price, 10000,])
     const [recommendedProducts, setRecommendedProducts] = useState([])
     
     const addToCart = useStore((state:any) => state.addToCart);
