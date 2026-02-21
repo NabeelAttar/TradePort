@@ -209,9 +209,9 @@ export default function ProductDetails({ productDetails }: Props) {
 
     return (
         <div className="w-full bg-[#f5f5f5] py-5">
-            <div className="w-[90%] bg-white lg:w-[80%] mx-auto pt-6 grid grid-cols-1 lg:grid-cols-[28%_44&_28%] gap-6 overflow-hidden">
+            <div className="w-[90%] bg-white lg:w-[80%] mx-auto pt-6 grid grid-cols-1 lg:grid-cols-[28%_44%_28%] gap-6 overflow-hidden">
                 {/* left column */}
-                <div className='p-4 '>
+                <div className='p-4'>
                     <div className='relative w-full'>
                         {/* main  image with zoom*/}
                         <div
@@ -281,6 +281,7 @@ export default function ProductDetails({ productDetails }: Props) {
 
                         {isActive && (
                             <div
+                                className='absolute top-0 left-full ml-4 border bg-white shadow-lg'
                                 style={{
                                     width: zoomPaneWidth,
                                     height: zoomPaneHeight,
