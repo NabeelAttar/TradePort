@@ -67,7 +67,7 @@ model shops {
   coverBanner      String?
   address          String
   opening_hours    String?
-  followers ShopFollower[]
+  followers        ShopFollower[]
   website          String
   socialLinks      Json[]
   ratings          Float              @default(0)
