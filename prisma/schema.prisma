@@ -20,17 +20,17 @@ model images {
 }
 
 model users {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  email       String        @unique
-  password    String?
-  following   String[]
-  avatar      images?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  shopReviews shopReviews[]
-  orders      orders[]
-  followedShops ShopFollower[] 
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String         @unique
+  password      String?
+  following     String[]
+  avatar        images?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  shopReviews   shopReviews[]
+  orders        orders[]
+  followedShops ShopFollower[]
 }
 
 model userAnalytics {
@@ -196,7 +196,7 @@ model orders {
 }
 
 model ShopFollower {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 
   shopId String @db.ObjectId
   shop   shops  @relation(fields: [shopId], references: [id])

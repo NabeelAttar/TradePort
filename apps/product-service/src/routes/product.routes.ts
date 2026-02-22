@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { createDiscountCode, createProduct, deleteDiscountCode, deleteProduct, deleteProductImage, getAllProducts, getCategories, getDiscountCodes, getFilteredEvents, getFilteredProducts, getFilteredShops, getProductDetails, getShopProducts, restoreProduct, searchProducts, uploadProductImage, topShops } from "../controllers/product.controller";
+import { createDiscountCode, createProduct, deleteDiscountCode, deleteProduct, deleteProductImage, getAllProducts, getCategories, getDiscountCodes, getFilteredEvents, getFilteredProducts, getFilteredShops, getProductDetails, getShopProducts, restoreProduct, searchProducts, uploadProductImage, topShops, getAllEvents } from "../controllers/product.controller";
 import isAuthenticated from "@packages/middlewares/isAuthenticated";
 
 const router:Router = express.Router();
@@ -15,6 +15,7 @@ router.get("/get-shop-products", isAuthenticated, getShopProducts);
 router.delete("/delete-product/:productId", isAuthenticated, deleteProduct);
 router.put("/restore-product/:productId", isAuthenticated, restoreProduct);
 router.get("/get-all-products", getAllProducts);
+router.get("/get-all-events", getAllEvents);
 router.get("/get-product/:slug", getProductDetails);
 router.get("/get-filtered-products", getFilteredProducts);
 router.get("/get-filtered-offers", getFilteredEvents);
