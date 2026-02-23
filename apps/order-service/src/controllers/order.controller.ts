@@ -25,7 +25,7 @@ export const createPaymentIntent = async (req: any, res: Response, next: NextFun
             payment_method_types: ["card"],
             application_fee_amount: platfromFee,
             transfer_data: {
-                destination: sellerStripeAccountId
+                destination: sellerStripeAccountId || ""
             },
             metadata: {
                 sessionId,

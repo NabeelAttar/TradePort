@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from 'apps/user-ui/src/utils/axiosInstance';
+import toast from 'react-hot-toast';
 
 const page = () => {
     const router = useRouter();
@@ -24,6 +25,25 @@ const page = () => {
     const [discountAmount, setDiscountAmount] = useState(0);
     const [couponCode, setCouponcode] = useState("");
     const [selectedAddressId, setSelectedAddressId] = useState("")
+
+    const createPaymentSession = async () => {
+        setLoading(true)
+        try {
+            const res = await axiosInstance.post("/order/api/create-payment-session", {
+                cart,
+                selectedAddressId,
+                coupon: {},
+            })
+            
+            const sessionId = res.data.sessionId
+            router.push(`/checkout?sessionId=${sessionId}`)
+
+        } catch (error) {
+            toast.error("Something went wrong. Please try again.")
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const decreaseQuantity = (id:string) => {
         useStore.setState((state : any) => ({
@@ -219,7 +239,11 @@ const page = () => {
                                 <span>₹{(subTotal - discountAmount).toFixed(2)}</span>
                             </div>
 
-                            <button className='w-full flex items-center justify-center gap-2 cursor-pointer mt-3 py-3  bg-[#010f1c] text-white hover:bg-[#0989ff] transition-all rounded-lg' disabled={loading}>
+                            <button
+                                className='w-full flex items-center justify-center gap-2 cursor-pointer mt-3 py-3  bg-[#010f1c] text-white hover:bg-[#0989ff] transition-all rounded-lg' 
+                                disabled={loading}
+                                onClick={createPaymentSession}
+                            >
                                 {loading && <Loader2 className='animate-spin w-5 h-5' />}
                                 {loading ? "Redirecting..." : "Proceed to Checkout"}
                             </button>
