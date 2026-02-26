@@ -40,7 +40,7 @@ model userAnalytics {
   city           String?
   device         String?
   lastVisited    DateTime
-  lastTrained    DateTime @default(now())
+  lastTrained    DateTime? @default(now())
   actions        Json?
   recommendation Json?
   createdAt      DateTime @default(now())
@@ -92,8 +92,9 @@ model sellers {
   bankAccountNumber  String?
   bankAccountCountry String?
   accountCurrency    String?
-  bankAccountStatus  String   @default("pending") // pending, verified, active
+  bankBalance        Float      @default(0) // pending, verified, active
   shop               shops?
+  payouts payouts[]
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 }
@@ -102,6 +103,7 @@ model site_config {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   categories    String[]
   subCategories Json
+  platformBalance Float @default(0)
 }
 
 model discount_codes {
@@ -178,6 +180,10 @@ model orders {
   shopId String @db.ObjectId
   shop   shops  @relation(fields: [shopId], references: [id])
 
+  razorpayOrderId   String? 
+  razorpayPaymentId String? 
+  paymentCapturedAt DateTime?
+
   total             Float
   shippingAddressId String?
   couponCode        String?
@@ -185,7 +191,7 @@ model orders {
   status            String // pending, paid, shipped, delivered, cancelled
   deliveryStatus    String?
   items             orderItems[] @relation("OrderItemsRelation") // array of products with qty + price snapshot
-
+  payout payouts? @relation("OrderToPayout")   // 👈 THIS FIXES YOUR ERROR
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -260,4 +266,36 @@ model uniqueShopVisitors {
   visitedAt DateTime @default(now())
 
   @@unique([shopId, userId])
+}
+
+enum payoutStatus {
+  pending
+  paid
+  failed
+  cancelled
+}
+
+model payouts {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  sellerId String @db.ObjectId
+  seller   sellers @relation(fields: [sellerId], references: [id])
+
+  orderId String @db.ObjectId @unique
+  order   orders  @relation("OrderToPayout", fields: [orderId], references: [id])
+
+  grossAmount   Float
+  platformFee   Float
+  sellerAmount  Float
+
+  status payoutStatus @default(pending)
+
+  retryCount Int @default(0)
+  lastError  String?
+
+  scheduledAt DateTime?
+  processedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

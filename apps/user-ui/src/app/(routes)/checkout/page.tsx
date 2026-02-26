@@ -1,18 +1,27 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { loadStripe, Appearance } from '@stripe/stripe-js'
 import { useRouter, useSearchParams } from 'next/navigation'
 import axiosInstance from 'apps/user-ui/src/utils/axiosInstance'
 import { XCircle } from 'lucide-react'
-import {Elements} from '@stripe/react-stripe-js'
-import CheckoutForm from 'apps/user-ui/src/shared/components/checkout/CheckoutForm'
+import Image from 'next/image'
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!)
+declare global {
+    interface Window {
+        Razorpay: any
+    }
+}
+
+type Coupon = {
+  code?: string
+  discountAmount?: number
+  discountPercent?: number
+  discountedProductId?: string
+}
 
 const page = () => {
-    const [clientSecret, setClientSecret] = useState("")
     const [cartItems, setCartItems] = useState<any[]>([])
-    const [coupon, setCoupon] = useState()
+    const [coupon, setCoupon] = useState<Coupon | null>(null)
+    const [totalAmount, setTotalAmount] = useState<number | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const searchParams = useSearchParams()
@@ -21,7 +30,25 @@ const page = () => {
     const sessionId = searchParams.get("sessionId")
 
     useEffect(() => {
-      const fetchSessionAndClientSecret = async () => {
+        const loadScript = () => {
+            return new Promise((resolve) => {
+                if (document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]')) {
+                    resolve(true)
+                    return
+                }
+                const script = document.createElement("script")
+                script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+                script.onload = () => resolve(true)
+                script.onerror = () => resolve(false)
+                document.body.appendChild(script)
+            })
+        }
+        loadScript()
+    }, [])
+
+    // fetch session (cart, total, coupon) to display to user
+    useEffect(() => {
+      const initializePayment = async () => {
         if(!sessionId){
             setError("Invalid session. Please try again.")
             setLoading(false)
@@ -29,39 +56,80 @@ const page = () => {
         }
 
         try {
+            // verify-payment-session endpoint should return session shape as in your backend redis payload
             const verifyRes = await axiosInstance.get(`/order/api/verifying-payment-session?sessionId=${sessionId}`)
-
-            const {totalAmount, sellers, cart, coupon } = verifyRes.data.session
-
-            if(!sellers || sellers.length === 0 || totalAmount === undefined || totalAmount === null){
-                throw new Error("Invalid payment session data")
+            const session = verifyRes.data.session
+            if(!session){
+                throw new Error("Payment session not found or expired")
             }
 
-            setCartItems(cart)
-            setCoupon(coupon)
-            const selletStripeAccountId = sellers[0].bankId
-
-            const intentRes = await axiosInstance.post("/order/api/create-payment-intent", {
-                amount: coupon?.discountAmount ? totalAmount - coupon?.discountAmount : totalAmount,
-                selletStripeAccountId,
-                sessionId,
-            })
-
-            setClientSecret(intentRes.data.clientSecret)
-
-        } catch (error) {
-            console.log(error)
-            setError("Something went wrong while preparing your payment.")
+            setCartItems(session.cart || [])
+            setCoupon(session.coupon || null)
+            setTotalAmount(session.totalAmount ?? null)
+        } catch (err: any) {
+            console.error(err)
+            setError(err?.response?.data?.error || err?.message || "Something went wrong while preparing your payment.")
         } finally {
             setLoading(false)
         }
       }
 
-      fetchSessionAndClientSecret();
+      initializePayment();
     }, [sessionId])
-    
-    const appearance: Appearance = {
-        theme: "stripe",
+
+    const handlePayCLick = async () => {
+    if(!sessionId){
+        setError("Invalid session. Please try again.")
+        return
+    }
+    setLoading(true)
+
+    try {
+        // 1 : create razorpay order :
+        const res = await axiosInstance.post("/order/api/create-razorpay-order", { sessionId })
+
+        const {orderId, amount, keyId } = res.data
+
+        // open razorpay
+        const options = {
+            key: keyId,
+            amount,
+            currency: "INR",
+            name: "TradePort",
+            description: "Order Payment",
+            order_id: orderId,
+            handler: async function (response : any) {
+                try {
+                    await axiosInstance.post(
+                        "/order/api/verify-razorpay-payment",
+                        {
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_signature: response.razorpay_signature,
+                            sessionId
+                        }
+                    )
+
+                    router.push(`payment-success?sessionId=${sessionId}`)
+                } catch (error) {
+                    console.error(error)
+                    setError("Payment verification failed.")
+                }
+            },
+            prefill: {},
+            theme: {
+                color: "#2563eb"
+            }
+        }
+        const rzp = new window.Razorpay(options)
+        rzp.open()
+
+    } catch (error:any) {
+        console.log(error)
+        setError(error?.response?.data?.message || error?.message || "Failed to initialize payment.")
+    } finally {
+        setLoading(false)
+    }       
     }
 
     if(loading){
@@ -94,13 +162,69 @@ const page = () => {
         )
     }
 
+    const computedTotal = cartItems.reduce((sum, item) => sum + (item.quantity ?? 1) * (item.sale_price ?? 0), 0)
+    const displayedTotal = typeof totalAmount === "number" ? totalAmount : computedTotal
+
   return (
-    clientSecret && (
-        <Elements stripe={stripePromise} options={{clientSecret, appearance}}>
-            <CheckoutForm clientSecret={clientSecret} cartItems={cartItems} coupon={coupon} sessionId={sessionId} />
-        </Elements>
+        <div className='min-h-[70vh] flex justify-center items-start p-6'>
+            <div className='w-full max-w-3xl bg-white p-6 rounded shadow'>
+                <h2 className='text-2xl font-semibold mb-4'>Order Summary</h2>
+
+                <div className='space-y-3'>
+                    {cartItems.map((item:any) => (
+                        <div key={item.id} className='flex items-center gap-4 border-b pb-3'>
+                            <div className='w-16 h-16 relative'>
+                                {item?.images?.[0]?.url ? (
+                                    <Image src={item.images[0].url} alt={item.title} fill style={{ objectFit: 'cover' }} className='rounded' />
+                                ) : (
+                                    <div className='w-16 h-16 bg-gray-100 rounded' />
+                                )}
+                            </div>
+                            <div className='flex-1'>
+                                <div className='font-medium'>{item.title}</div>
+                                <div className='text-sm text-gray-500'>
+                                    {item.selectedOptions && (
+                                        <>
+                                            {item.selectedOptions.color && <span>Color: {item.selectedOptions.color} </span>}
+                                            {item.selectedOptions.size && <span className='ml-2'>Size: {item.selectedOptions.size}</span>}
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                            <div className='text-right'>
+                                <div>₹{(item.sale_price * (item.quantity ?? 1)).toFixed(2)}</div>
+                                <div className='text-sm text-gray-500'>{item.quantity} x ₹{item.sale_price.toFixed(2)}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className='mt-4 border-t pt-4'>
+                    {!!coupon?.discountAmount && (
+                        <div className='flex justify-between text-sm text-gray-700 pb-1'>
+                            <span>Discount</span>
+                            <span>- ₹{coupon.discountAmount.toFixed(2)}</span>
+                        </div>
+                    )}
+
+                    <div className='flex justify-between text-lg font-semibold'>
+                        <span>Total</span>
+                        <span>₹{displayedTotal.toFixed(2)}</span>
+                    </div>
+
+                    <div className='mt-6'>
+                        <button
+                            onClick={handlePayCLick}
+                            className='w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700'
+                            disabled={loading}
+                        >
+                            {loading ? "Processing..." : "Pay Securely with Razorpay"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     )
-  )
 }
 
 export default page

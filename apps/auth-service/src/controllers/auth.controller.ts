@@ -377,7 +377,6 @@ export const createBankAccount = async (req: Request, res: Response, next: NextF
                 bankAccountNumber: accountNumber,
                 bankAccountCountry: bankAccountCountry,
                 accountCurrency: accountCurrency,
-                bankAccountStatus: "pending", // Status starts as pending, will be verified after KYC
             },
         });
 

@@ -25,6 +25,7 @@ const page = () => {
     const [discountAmount, setDiscountAmount] = useState(0);
     const [couponCode, setCouponcode] = useState("");
     const [selectedAddressId, setSelectedAddressId] = useState("")
+    const [paymentMethod, setPaymentMethod] = useState("online")
 
     const createPaymentSession = async () => {
         setLoading(true)
@@ -79,7 +80,7 @@ const page = () => {
         if(addresses.length > 0 && !selectedAddressId) {
             const defaultAddress = addresses.find((address) => address.isDefault)
             if(defaultAddress){
-                setSelectedAddressId(defaultAddress);
+                setSelectedAddressId(defaultAddress.id);
             }
         }
     }, [selectedAddressId, addresses])
@@ -227,9 +228,9 @@ const page = () => {
                                 <div className='mb-[7px] font-medium text-[15px]' >
                                     Select Payment Method
                                 </div>
-                                <select className='w-full p-2 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500' value={selectedAddressId} onChange={(e) => setSelectedAddressId(e.target.value)}>
-                                    <option value="credit_card">Online Payment</option>
-                                    <option value="cash_on_delivery">Cash on delivery</option>
+                                <select className='w-full p-2 border border-gray-200 rounded-md focus:outline-none focus:border-blue-500' value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
+                                    <option value="online">Online Payment</option>
+                                    <option value="cod">Cash on delivery</option>
                                 </select>   
                             </div>
                             <hr className='my-4 text-slate-200'/>

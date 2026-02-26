@@ -1,107 +1,139 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Order Confirmation - TradePort</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <style>
-            body {
-                margin: 0;
-                padding: 0;
-                background-color: #f9fafb;
-                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-                color: #111827;
-            }
-            .container {
-                max-width: 600px;
-                margin: auto;
-                background: #ffffff;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 0 10px rgba(0, 0 0,0.04);
-            }
-            .header {
-                background-color: #2563eb;
-                padding: 20px;
-                text-align: center;
-                color: #ffffff;
-            }
-            .header h1 {
-                margin: 0;
-                font-size: 24px;
-            }
-            .body {
-                padding: 30px;
-            }
-            .body h2 {
-                margin-top: 0;
-                font-size: 20px;
-                color: #111827;
-            }
-            .order-summary {
-                background-color: #f3f4f6;
-                padding: 15px;
-                border-radius: 6px;
-                margin-top: 20px;
-                font-size: 14px;
-            }
-            .order-summary p {
-                margin: 6px 0;
-                line-height: 1.4;
-            }
-            .total {
-                font-weight: bold;
-                font-size: 16px;
-                margin-top: 10px;
-            }
-            .button {
-                display: inline-block;
-                background-color: #2563eb;
-                color: #ffffff;
-                padding: 12px 20px;
-                margin-top: 30px;
-                text-decoration: none;
-                border-radius: 5px;
-                font-weight: bold;
-            }
-            .footer {
-                padding: 20px;
-                font-size: 12px;
-                text-align: center;
-                color: #6b7280;
-                background-color: #f9fafb;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <h1> Order Confirmed!</h1>
-            </div>
-            <div class="body">
-                <h2>Hi <%= name %>, </h2>
-                <p>
-                    Thank you for your purchase! We've received your order and will start
-                    processing it shortly.
-                </p>
-                <div class="order-summary">
-                    % cart.forEach(item { %>
-                    <p>
-                        <strong><%= item.title %></strong> - <%= item.quantity %> * ₹%=
-                        item.sale_price.toFixed(2) %>
-                    </p>
-                    <% }) %>
-                    <p class="total">Total: ₹<% totalAmount.toFixed(2) %></p>
-                </div>
-                <a href="<%= trackingUrl %>" class="button"> Track Your Order</a>
-                <p style="margin-top: 20px">
-                    If you have any questions, just reply to this email or contact us at
-                    <a href="mailto:nabeelattar2411@gmail.com">support@tradeport.com</a>.
-                </p>
-            </div>
-            <div class="footer">
-                &copy; <%= new Date().getFullYear() %> TradePort. All rights reserved.
-            </div>
+<head>
+    <title>TradePort Order Confirmation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            min-width: 100%;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            background-color: #fafafa;
+            color: #222222;
+        }
+
+        a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 1.25;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .email-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .email-header {
+            background-color: #0070f3;
+            padding: 24px;
+            color: #ffffff;
+        }
+
+        .email-body {
+            padding: 24px;
+            background-color: #ffffff;
+        }
+
+        .email-footer {
+            background-color: #f6f6f6;
+            padding: 24px;
+            font-size: 13px;
+            color: #555555;
+        }
+
+        .order-box {
+            background-color: #f6f6f6;
+            padding: 16px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+
+        .total {
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 15px;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #0070f3;
+            color: #ffffff !important;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            padding: 12px 24px;
+            border-radius: 4px;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-wrapper">
+
+        <div class="email-header">
+            <h1>Order Confirmed</h1>
         </div>
-    </body>
+
+        <div class="email-body">
+            <p>Hello <%= name %>,</p>
+
+            <p>
+                Thank you for your order. We've successfully received your payment
+                and your items are now being processed.
+            </p>
+
+            <div class="order-box">
+
+                <% if (cart && cart.length) { %>
+                    <% cart.forEach(function(item) { %>
+                        <p>
+                            <strong><%= item.title %></strong><br/>
+                            Quantity: <%= item.quantity %><br/>
+                            Unit Price: ₹<%= Number(item.sale_price).toFixed(2) %><br/>
+                            Line Total: ₹<%= (item.quantity * item.sale_price).toFixed(2) %>
+                        </p>
+                        <hr style="border:none; border-top:1px solid #ddd; margin:12px 0;" />
+                    <% }) %>
+                <% } %>
+
+                <p class="total">
+                    Total Paid: ₹<%= (totalAmount || 0).toFixed(2) %>
+                </p>
+
+            </div>
+
+            <a href="<%= trackingURL %>" class="button">
+                Track Your Order
+            </a>
+
+            <p style="margin-top: 30px;">
+                If you have any questions, feel free to reply to this email
+                or contact us at support@tradeport.com.
+            </p>
+        </div>
+
+        <div class="email-footer">
+            &copy; <%= new Date().getFullYear() %> TradePort. All rights reserved.
+        </div>
+
+    </div>
+</body>
 </html>

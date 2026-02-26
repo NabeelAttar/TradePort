@@ -25,7 +25,7 @@ const renderEmailTemplate = async (templateName: string, data: Record<string, an
     const templatePath = path.join( //Builds absolute file path safely
         process.cwd(), //return working directory of the current process 
         "apps",
-        "auth-service",
+        "order-service",
         "src",
         "utils",
         "email-templates", //this is the folder structure where templates live, auth-service/src/utils/email-templates
