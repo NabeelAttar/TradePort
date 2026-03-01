@@ -1,4 +1,5 @@
 import axios from "axios";
+import { runRedirectToLogin } from "./redirect";
 
 const axiosInstance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_SERVER_URI,
@@ -10,9 +11,13 @@ let refreshSubscribers: (() => void)[] = []; //an array for storing queue of pen
 
 // handle logout and prevent infiinite loops - Prevents redirect loop if already on /login
 const handleLogout = () => {
-    if(window.location.pathname !== "/login"){
-        window.location.href = "/login";
+    const publicPaths = ["/login", "/signup", "/forgot-password"]
+    const currentPath = window.location.pathname
+
+    if(!publicPaths.includes(currentPath)){
+        runRedirectToLogin()
     }
+
 }
 
 // handle adding a new access token to queued requests
@@ -40,18 +45,21 @@ axiosInstance.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config; //jisme error aaya uska config catch karlo
 
+        const is401 = error?.response?.status === 401
+        const isRetry = originalRequest?._retry
+        const isAuthRequired = originalRequest?.requireAuth === true
+
         // prevent infinite retry loops
-        if(error.response?.status === 401 && !originalRequest._retry){
-            // 401 for handling only unauthorized requsts, and infinite loops ko aoivd karne originalRequest._retry ye false hona chahiye
+        if(is401 && !isRetry && isAuthRequired){
             if(isRefreshing){
-                // if is Rrefreshing is true, mtlb ab token refresh ho rha h, to array me callback push karne wala function call kiya
-                // aur fir promise resolve kiya
                 return new Promise((resolve) => {
-                    subscribeTokenRefresh(() => resolve(axiosInstance(originalRequest)));
+                    subscribeTokenRefresh(() => resolve(axiosInstance(originalRequest)))
                 })
             }
-            originalRequest._retry = true;  //to prevent infinite calls
-            isRefreshing = true; //lock refresh process
+
+            originalRequest._retry = true
+            isRefreshing = true
+
             try {
                 await axios.post(
                     `${process.env.NEXT_PUBLIC_SERVER_URI}/api/refresh-token`, 
