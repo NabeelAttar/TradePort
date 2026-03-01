@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { createShop, createBankAccount, getSeller, getUser, loginSeller, loginUser, refreshToken, registerSeller, resetUserPassword, userForgotPassword, userRegistration, verifySeller, verifyUser, verifyUserForgotPassword, getUserAddresses, addUserAddress, deleteUserAddress } from "../controllers/auth.controller";
+import { createShop, createBankAccount, getSeller, getUser, loginSeller, loginUser, refreshToken, registerSeller, resetUserPassword, userForgotPassword, userRegistration, verifySeller, verifyUser, verifyUserForgotPassword, getUserAddresses, addUserAddress, deleteUserAddress, updateUserPassword } from "../controllers/auth.controller";
 import isAuthenticated from "@packages/middlewares/isAuthenticated";
 import { isSeller } from "@packages/middlewares/authorizedRoles";
 
@@ -13,7 +13,7 @@ router.get("/logged-in-user", isAuthenticated, getUser);
 router.post("/forgot-password-user", userForgotPassword)
 router.post("/verify-forgot-password-user", verifyUserForgotPassword)
 router.post("/reset-password-user", resetUserPassword)
-// update user password
+router.post("/change-password", isAuthenticated, updateUserPassword)
 // login admin
 //  get admin
 

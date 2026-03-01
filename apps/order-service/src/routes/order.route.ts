@@ -1,6 +1,6 @@
 import isAuthenticated from "@packages/middlewares/isAuthenticated";
 import express, {Router} from "express"
-import { createPaymentSession, createRazorpayOrder, getOrderDetails, getSellersOrders, updateDeliveryStatus, verifyCouponCode, verifyPaymentSession, verifyRazorpayPayment,  } from "../controllers/order.controller";
+import { createPaymentSession, createRazorpayOrder, getOrderDetails, getSellersOrders, getUserOrders, updateDeliveryStatus, verifyCouponCode, verifyPaymentSession, verifyRazorpayPayment,  } from "../controllers/order.controller";
 import { isSeller } from "@packages/middlewares/authorizedRoles";
 
 const router:Router = express.Router();
@@ -13,5 +13,6 @@ router.get("/get-seller-orders", isAuthenticated, isSeller, getSellersOrders);
 router.get("/get-order-details/:id", isAuthenticated, getOrderDetails);
 router.put("/update-status/:orderId", isAuthenticated, isSeller, updateDeliveryStatus);
 router.put("/verify-coupon", isAuthenticated, verifyCouponCode);
+router.get("/get-user-orders", isAuthenticated, getUserOrders);
 
 export default router

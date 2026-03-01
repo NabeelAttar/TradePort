@@ -470,26 +470,46 @@ export const loginSeller = async (req: Request, res: Response, next: NextFunctio
     }
 }
 
-// export const updateUserPassword = async (req: any, res: Response, next: NextFunction) => {
-//     try {
-//         const userId = req?.user?.id
-//         const { currentPassword, newPassword, confirmPassword }= req.body;
+export const updateUserPassword = async (req: any, res: Response, next: NextFunction) => {
+    try {
+        const userId = req?.user?.id
+        const { currentPassword, newPassword, confirmPassword }= req.body;
 
-//         if(!currentPassword || !newPassword || !confirmPassword){
-//             return next(new ValidationError("all fields are required"))
-//         }
+        if(!currentPassword || !newPassword || !confirmPassword){
+            return next(new ValidationError("all fields are required"))
+        }
 
-//         if(newPassword !== confirmPassword){
-//             return next(new ValidationError("new passwords do not match"))
-//         }
+        if(newPassword !== confirmPassword){
+            return next(new ValidationError("new passwords do not match"))
+        }
 
-//         if(currentPassword === newPassword){
-//             return next(new ValidationError("new password cannot be same as the current password"))
-//         }
-//     } catch (error) {
-        
-//     }
-// }
+        if(currentPassword === newPassword){
+            return next(new ValidationError("new password cannot be same as the current password"))
+        }
+
+        const user = await prisma.users.findUnique({
+            where: {id: userId}
+        })
+        if(!user || !user.password){
+            return next(new AuthError("user not found or password not set"))
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password)
+        if(!isPasswordCorrect){
+            return next(new AuthError("current password is incorrect"))
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10)
+        await prisma.users.update({
+            where: {id: userId},
+            data: { password: hashedPassword}
+        })
+
+        res.status(200).json({message: "password updated successfully."})
+    } catch (error) {
+        return next(error)
+    }
+}
 
 // get loggedin seller
 

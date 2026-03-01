@@ -8,11 +8,11 @@ import {
 } from "@tanstack/react-table";
 import { Search, Eye, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import axiosInstance from "apps/seller-ui/src/utils/axiosInstance";
+import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import Link from "next/link";
 
 const fetchOrders = async () => {
-    const res = await axiosInstance.get("/order/api/get-seller-orders");
+    const res = await axiosInstance.get("/order/api/get-user-orders");
     return res.data.orders;
 };
 

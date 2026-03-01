@@ -1,21 +1,39 @@
 'use client'
-import { useQueryClient } from '@tanstack/react-query';
-import useUser from 'apps/user-ui/src/hooks/useUser'
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import QuickActionCard from 'apps/user-ui/src/shared/components/cards/QuickActionCard';
 import StatCard from 'apps/user-ui/src/shared/components/cards/StatCard';
+import OrdersTable from 'apps/user-ui/src/shared/components/tables/OrdersTable';
+import ChangePassword from 'apps/user-ui/src/shared/components/ChangePassword';
 import ShippingAddressSection from 'apps/user-ui/src/shared/components/ShippingAddressSection';
 import axiosInstance from 'apps/user-ui/src/utils/axiosInstance';
 import { BadgeCheck, Bell, CheckCircle, Clock, Gift, Inbox, Loader2, Lock, LogOut, MapPin, Pencil, PhoneCall, Receipt, Settings, ShoppingBag, Truck, User } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
+import useRequireAuth from 'apps/user-ui/src/hooks/useRequiredAuth';
 
 const page = () => {
     const searchParams = useSearchParams();
     const router = useRouter();
     const queryClient = useQueryClient()
 
-    const {user, isLoading} = useUser();
+    const {user, isLoading} = useRequireAuth();
+    
+    const {data: orders = [] } = useQuery({
+        queryKey: ["user-orders"],
+        queryFn: async () => {
+            const res = await axiosInstance.get(`/order/api/get-user-orders`)
+            return res.data.orders
+        }
+    })
+    const totalOrders = orders.length
+    const processingOrders = orders.filter(
+        (o: any) => o?.deliveryStatus !== "Delivered" && o?.deliveryStatus !== "Cancelled"
+    ).length
+    const completedOrders = orders.filter(
+        (o:any) => o?.deliveryStatus === "Delivered"
+    ).length
+
     const queryTab = searchParams.get("active") || "Profile"
     const [activeTab, setActiveTab] = useState(queryTab);
 
@@ -54,9 +72,9 @@ const page = () => {
 
             {/* profile overview grid*/}
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6'>
-                <StatCard title="Total Orders" count={10} Icon={Clock} />
-                <StatCard title="Processing Orders" count={4} Icon={Truck} />
-                <StatCard title="Completed Orders" count={6} Icon={CheckCircle} />
+                <StatCard title="Total Orders" count={totalOrders} Icon={Clock} />
+                <StatCard title="Processing Orders" count={processingOrders} Icon={Truck} />
+                <StatCard title="Completed Orders" count={completedOrders} Icon={CheckCircle} />
             </div>
 
             {/* sidebar and content layout */}
@@ -102,9 +120,11 @@ const page = () => {
                         </div>
                     ) : activeTab === "Shipping Address" ? (
                         <ShippingAddressSection />
-                    ) : (
-                        <></>
-                    )}
+                    ) : activeTab === "My Orders" ? (
+                        <OrdersTable />
+                    ) : activeTab === "Change Password" ? (
+                        <ChangePassword />
+                    ) : <></>}
                 </div>
 
                 {/* right quick panel */}
