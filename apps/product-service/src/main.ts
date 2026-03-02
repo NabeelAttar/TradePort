@@ -11,7 +11,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"], //port 3000 will be our frontend, meaning cors should only allow requests from this port 
+    origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"], //port 3000 will be our frontend, meaning cors should only allow requests from this port 
     allowedHeaders: ['Authorization', 'Content-Type'],
     credentials: true,
   })

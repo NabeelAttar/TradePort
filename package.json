@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "node start-dev.js",
     "user-ui": "nx dev @trade-port/user-ui",
-    "seller-ui": "nx dev @trade-port/seller-ui"
+    "seller-ui": "nx dev @trade-port/seller-ui",
+    "admin-ui": "nx dev @trade-port/admin-ui"
   },
   "private": true,
   "dependencies": {
@@ -28,12 +29,12 @@
     "kafkajs": "^2.2.4",
     "lucide-react": "^0.562.0",
     "morgan": "^1.10.1",
-    "next": "~15.1.4",
+    "next": "~15.2.4",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.12",
     "razorpay": "^2.9.6",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-hook-form": "^7.71.1",
     "react-hot-toast": "^2.6.0",
     "react-inner-image-zoom": "^4.0.1",

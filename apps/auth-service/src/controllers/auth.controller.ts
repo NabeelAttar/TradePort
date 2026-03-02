@@ -392,7 +392,7 @@ export const createBankAccount = async (req: Request, res: Response, next: NextF
             object: "account_link",
             created: Date.now(),
             expires_at: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-            url: `${process.env.FRONTEND_URI || "http://localhost:3000"}/success`,
+            url: `${process.env.FRONTEND_URI || "http://localhost:3001"}/success`,
             type: "account_onboarding",
             status: "complete", // Response status (not DB status)
         };
@@ -523,6 +523,75 @@ export const getSeller = async (req: any, res: Response, next: NextFunction) => 
     } catch (error) {
         next(error);
     }
+}
+
+// login admin
+export const loginAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const {email, password} = req.body
+        if(!email || !password){
+            return next(new ValidationError("Email and Password are required."))
+        }
+
+        const user = await prisma.users.findUnique({ where : { email }})
+        if(!user){
+            return next(new ValidationError("Admin doesnt exist with this email"))
+        }
+
+        // verify password
+        const isMatch = await bcrypt.compare(password, user.password!)
+        if(!isMatch){
+            return next(new AuthError("Invalid email or password"))
+        }
+
+        // // const isAdmin = user.role === "Admin"
+        // if(!isAdmin){
+        //     sendLog({
+        //         type: "error",
+        //         message: `Admin login failed for ${email} - not an admin`,
+        //         source: "auth-service"
+        //     })
+        //     return next(new AuthError("Invalid access"))
+        // }
+
+        // sendLog({
+        //     type: "success",
+        //     message:`Admin login successful - ${email}`,
+        //     source: "auth-service"
+        // })
+
+        res.clearCookie("seller_access_token")
+        res.clearCookie("seller_refresh_token")
+
+        // generate access and refresh token
+        const accessToken = jwt.sign(
+            {id: user.id, role: "admin"},
+            process.env.ACCESS_TOKEN_SECRET as string,
+            {
+                expiresIn: "15m"
+            }
+        )
+
+        const refreshToken = jwt.sign(
+            {id: user.id, role: "admin"},
+            process.env.REFRESH_TOKEN_SECRET as string,
+            {
+                expiresIn: "7d"
+            }
+        )
+
+        // store the tokens in http only secure cookie
+        setCookie(res, "refresh_token", refreshToken)
+        setCookie(res, "access_token", accessToken)
+
+        res.status(200).json({
+            message: "Login successful",
+            user: { id: user.id, email: user.email, name: user.name}
+        })
+
+    } catch (error) {
+        return next(error)
+    }   
 }
 
 // export const logOutAdmin = async (req: any, res: Response) => {

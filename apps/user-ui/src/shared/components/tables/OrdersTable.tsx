@@ -1,12 +1,11 @@
 'use client'
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import {
     useReactTable,
     getCoreRowModel,
-    getFilteredRowModel,
     flexRender,
 } from "@tanstack/react-table";
-import { Search, Eye, ChevronRight } from "lucide-react";
+import { Eye } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import Link from "next/link";
@@ -16,143 +15,140 @@ const fetchOrders = async () => {
     return res.data.orders;
 };
 
-const ordersTable = () => {
-    const [globalFilter, setGlobalFilter] = useState("")
-    
+const OrdersTable = () => {
     const { data: orders = [], isLoading } = useQuery({
-        queryKey: ["sellers-orders"],
+        queryKey: ["user-orders"],
         queryFn: fetchOrders,
         staleTime: 1000 * 60 * 5
-    })
+    });
 
     const columns = useMemo(
         () => [
             {
                 accessorKey: "id",
                 header: "Order ID",
-                cell: ({row}:any) => (
-                    <span className="text-white text-sm truncate">
+                cell: ({ row }: any) => (
+                    <span className="text-sm text-gray-700">
                         #{row.original.id.slice(-6).toUpperCase()}
                     </span>
                 )
             },
             {
-                accessorKey: "user.name",
-                header: "Buyer",
-                cell: ({row}:any) => (
-                    <span className="text-white">
-                        {row.original.user?.name ?? "Guest"}
+                accessorKey: "status",
+                header: "Status",
+                cell: ({ row }: any) => (
+                    <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
+                            row.original.status === "Paid"
+                                ? "bg-green-100 text-green-600"
+                                : "bg-yellow-100 text-yellow-600"
+                        }`}
+                    >
+                        {row.original.status}
                     </span>
-                )   
+                )
             },
             {
                 accessorKey: "total",
-                header: "Total",
-                cell: ({row}:any) => (
-                    <span>
+                header: "Total (₹)",
+                cell: ({ row }: any) => (
+                    <span className="text-sm text-gray-700">
                         ₹{row.original.total}
                     </span>
-                )   
-            },
-            {
-                accessorKey: "status",
-                header: "Status",
-                cell: ({row}:any) => (
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${row.original.status === "Paid" ? "bg-green-600 text-white" : "bg-yellow-500 text-white"}`}>
-                        {row.original.status}
-                    </span>
-                )   
+                )
             },
             {
                 accessorKey: "createdAt",
                 header: "Date",
-                cell: ({row}:any) => {
-                    const date = new Date(row.original.createdAt).toLocaleDateString()
-                    return <span className="text-white text-sm">{date}</span>
+                cell: ({ row }: any) => {
+                    const date = new Date(
+                        row.original.createdAt
+                    ).toLocaleDateString();
+                    return (
+                        <span className="text-sm text-gray-500">
+                            {date}
+                        </span>
+                    );
                 }
             },
             {
                 header: "Actions",
-                cell: ({row}:any) => (
-                    <Link href={`/order/${row.original.id}`} className="text-blue-400 hover:text-blue-300 transition"><Eye size={18} /></Link>
+                cell: ({ row }: any) => (
+                    <Link
+                        href={`/order/₹{row.original.id}`}
+                        className="text-gray-500 hover:text-gray-700 transition"
+                    >
+                        <Eye size={18} />
+                    </Link>
                 )
-            },
+            }
         ],
         []
-    )
+    );
 
     const table = useReactTable({
         data: orders,
         columns,
-        getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        globalFilterFn: "includesString",
-        state: { globalFilter },
-        onGlobalFilterChange: setGlobalFilter
-    })
+        getCoreRowModel: getCoreRowModel()
+    });
 
     return (
-        <div className="w-full min-h-screen p-8">
-            <h2 className="text-2xl text-white font-semibold mb-2">
-                All Orders
-            </h2>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            {isLoading ? (
+                <p className="text-center py-6 text-gray-500">
+                    Loading Orders...
+                </p>
+            ) : orders.length === 0 ? (
+                <p className="text-center py-10 text-gray-500">
+                    No orders available yet!
+                </p>
+            ) : (
+                <table className="w-full text-sm">
+                    <thead>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <tr
+                                key={headerGroup.id}
+                                className="border-b border-gray-200"
+                            >
+                                {headerGroup.headers.map((header) => (
+                                    <th
+                                        key={header.id}
+                                        className="py-3 text-left font-medium text-gray-600"
+                                    >
+                                        {flexRender(
+                                            header.column.columnDef.header,
+                                            header.getContext()
+                                        )}
+                                    </th>
+                                ))}
+                            </tr>
+                        ))}
+                    </thead>
 
-            {/* breadcrumbs */}
-            <div className='flex items-center mb-4'>
-                <Link href={"/dashboard"} className='text-blue-400 cursor-pointer'>Dashboard</Link>
-                <ChevronRight className='text-gray-200' size={20}/>
-                <span className='text-white'>All Orders</span>
-            </div>
-
-            {/* search bar */}
-            <div className="my-4 flex items-center bg-gray-900 p-2 rounded-md flex-1">
-                <Search size={18} className="text-gray-400 mr-2" />
-                <input type="text" placeholder="Search Orders..." className="w-full bg-transparent text-white outline-none" value={globalFilter} onChange={(e) => setGlobalFilter(e.target.value)} />
-            </div>
-
-            {/* table */}
-            <div className="overflow-x-auto bg-gray-900 rounded-lg p-4">
-                {isLoading ? (
-                    <p className="text-center text-white">Loading Orders...</p>
-                ) : (
-                    <table className="w-full text-white">
-                        <thead>
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <tr className="border-b border-gray-800" key={headerGroup.id}>
-                                    {headerGroup.headers.map((header) => (
-                                        <th key={header.id} className="p-3 text-left text-sm">
-                                            {flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                        </th>
-                                    ))}
-                                </tr>
-                            ))}
-                        </thead>
-                        <tbody>
-                            {table.getRowModel().rows.map((row) => (
-                                <tr className="border-b border-gray-800 hover:bg-gray-900 transition" key={row.id}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <td className="p-3 text-sm" key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
-                                        </td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                )}
-
-                {isLoading && orders?.lenngth === 0 && (
-                    <p className="text-center py-3 text-white">No Orders Found!</p>
-                )}
-            </div>
+                    <tbody>
+                        {table.getRowModel().rows.map((row) => (
+                            <tr
+                                key={row.id}
+                                className="border-b border-gray-100 hover:bg-gray-50 transition"
+                            >
+                                {row.getVisibleCells().map((cell) => (
+                                    <td
+                                        key={cell.id}
+                                        className="py-4 text-gray-700"
+                                    >
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext()
+                                        )}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
         </div>
-    )
-}
+    );
+};
 
-export default ordersTable
+export default OrdersTable;

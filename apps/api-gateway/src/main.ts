@@ -19,7 +19,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"], //port 3000 will be our frontend, meaning cors should only allow requests from this port 
+    origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"], //port 3000 will be our user-ui and port 3001 will be our seller-ui, meaning cors should only allow requests from this port 
     allowedHeaders: ['Authorization', 'Content-Type'],
     credentials: true,
   })
@@ -47,6 +47,7 @@ app.get('/gateway-health', (req, res) => {
   res.send({ message: 'Welcome to api-gateway!' });
 });
 
+app.use('/admin', proxy('http://localhost:6005'))
 app.use('/order', proxy('http://localhost:6004'))
 app.use('/product', proxy('http://localhost:6002'));
 app.use('/', proxy('http://localhost:6001'));
