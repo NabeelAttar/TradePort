@@ -1,0 +1,1 @@
+// use get all products api from admin controller, using deferred global filter

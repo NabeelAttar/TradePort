@@ -1,0 +1,1 @@
+// same ui like /dashboard/ users, joined button takes u to shop details page

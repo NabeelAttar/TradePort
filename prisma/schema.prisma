@@ -103,6 +103,8 @@ model site_config {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   categories    String[]
   subCategories Json
+  logo String?
+  banner String?  
   platformBalance Float @default(0)
 }
 
@@ -233,7 +235,10 @@ model notifications {
   redirect_link String?
   title         String
   message       String
+  status String @default("unread")
+
   createdAt     DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model followers {

@@ -25,7 +25,7 @@ const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
             include: {shop: true},
            });
            req.seller = account;
-        }
+        } 
 
         if(!account){
             return res.status(401).json({message : "Account not found!"});

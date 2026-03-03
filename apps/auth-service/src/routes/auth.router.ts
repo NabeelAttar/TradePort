@@ -1,7 +1,7 @@
 import express, { Router } from "express";
-import { createShop, createBankAccount, getSeller, getUser, loginSeller, loginUser, refreshToken, registerSeller, resetUserPassword, userForgotPassword, userRegistration, verifySeller, verifyUser, verifyUserForgotPassword, getUserAddresses, addUserAddress, deleteUserAddress, updateUserPassword, loginAdmin } from "../controllers/auth.controller";
+import { createShop, createBankAccount, getSeller, getUser, loginSeller, loginUser, refreshToken, registerSeller, resetUserPassword, userForgotPassword, userRegistration, verifySeller, verifyUser, verifyUserForgotPassword, getUserAddresses, addUserAddress, deleteUserAddress, updateUserPassword, loginAdmin, getAdmin } from "../controllers/auth.controller";
 import isAuthenticated from "@packages/middlewares/isAuthenticated";
-import { isSeller } from "@packages/middlewares/authorizedRoles";
+import { isAdmin, isSeller } from "@packages/middlewares/authorizedRoles";
 
 const router:Router = express.Router();
 
@@ -15,7 +15,7 @@ router.post("/verify-forgot-password-user", verifyUserForgotPassword)
 router.post("/reset-password-user", resetUserPassword)
 router.post("/change-password", isAuthenticated, updateUserPassword)
 router.post('/login-admin', loginAdmin);
-//  get admin
+router.get("/logged-in-admin", isAuthenticated, isAdmin, getAdmin)
 
 router.post("/seller-registration", registerSeller);
 router.post("/verify-seller", verifySeller);

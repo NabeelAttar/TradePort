@@ -19,9 +19,13 @@ const initializeSiteConfig = async() => {
                         "Fashion": ["Men", "Women", "Kids", "Footwear"],
                         "Home & Kitchen": ["Furniture", "Appliances", "Decor"],
                         "Sports & Fitness": ["Gym Equipments", "Outdoor Sports", "Wearables"]
-                    }
+                    }, 
+                    // logo: "",
+                    // banner: ""
                 }
             })
+        } else {
+            console.log("Site config already exists. Skipping initialization.")
         }
     } catch (error) {
         console.log("Error initialising the site config:", error);

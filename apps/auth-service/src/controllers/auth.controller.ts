@@ -175,24 +175,24 @@ export const getUser = async (req: any, res: Response, next: NextFunction) => {
     }
 }
 
-// export const getAdmin = async (req: any, res: Response, next: NextFunction) => {
-//     try {
-//         const user = req.user
+export const getAdmin = async (req: any, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user
+        
+        // await sendLog({
+        //     type: "success",
+        //     message: `Admin data retrieved ${user?.email}`,
+        //     source: "auth-service"
+        // })
 
-//         await sendLog({
-//             type: "success",
-//             message: `Admin data retrieved ${user?.email}`,
-//             source: "auth-service"
-//         })
-
-//         res.status(201).json({
-//             success: true,
-//             user,
-//         })
-//     } catch (error) {
-//         return next(error)
-//     }
-// }
+        res.status(201).json({
+            success: true,
+            user,
+        })
+    } catch (error) {
+        return next(error)
+    }
+}
 
 // user forgot password
 
