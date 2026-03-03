@@ -1,23 +1,24 @@
-'use client';
+"use client";
 import React, { useEffect, useState } from "react";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import axiosInstance from "apps/admin-ui/src/utils/axiosInstance";
 import { useParams, useRouter } from "next/navigation";
+import axiosInstance from "apps/admin-ui/src/utils/axiosInstance";
 
-const statuses = [
+const deliverySteps = [
     "Ordered",
     "Packed",
     "Shipped",
     "Out for Delivery",
     "Delivered",
 ];
-const Page = () => {
+
+const AdminOrderPage = () => {
     const params = useParams();
     const orderId = params.id as string;
+    const router = useRouter();
+
     const [order, setOrder] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [updating, setUpdating] = useState(false);
-    const router = useRouter();
 
     const fetchOrder = async () => {
         try {
@@ -26,101 +27,63 @@ const Page = () => {
             );
             setOrder(res.data.order);
         } catch (err) {
-            setLoading(false);
-            console.error("Failed to fetch order details", err);
+            console.error("Failed to fetch order", err);
         } finally {
             setLoading(false);
         }
-    }
-
-    const handleStatusChange = async (
-        e: React.ChangeEvent<HTMLSelectElement>
-    ) => {
-        const newStatus = e.target.value;
-        setUpdating(true);
-        try {
-            await axiosInstance.put(`/order/api/update-status/${order.id}`, {
-                deliveryStatus: newStatus,
-            });
-            setOrder((prev: any) => ({ ...prev, deliveryStatus: newStatus }));
-        } catch (err) {
-            console.error("Failed to update status", err);
-        } finally {
-            setUpdating(false);
-        }
-    }
+    };
 
     useEffect(() => {
         if (orderId) fetchOrder();
     }, [orderId]);
 
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-[40vh]">
-                <Loader2 className="animate-spin w-6 h-6 text-gray-600" />
+                <Loader2 className="animate-spin w-6 h-6 text-gray-500" />
             </div>
         );
     }
 
     if (!order) {
-        return <p className="text-center text-sm text-red-500">Order not found.</p>;
+        return <p className="text-center text-red-500">Order not found</p>;
     }
 
     return (
-        <div className="max-w-5xl mx-auto px-4 py-10">
-            <div className="my-4">
-                <span
-                    className="text-white flex items-center gap-2 font-semibold cursor-pointer"
-                    onClick={() => router.push("/dashboard/orders")}
-                >
-                    <ArrowLeft />
-                    Go Back to Dashboard
-                </span> 
-            </div>
-            <h1 className="text-2xl font-bold text-gray-200 mb-4">
-                Order #{order.id.slice(-6)}
-            </h1>
-
-            {/* status selector */}
-            <div className="mb-6">
-                <label className="text-sm font-medium text-gray-300 mr-3">
-                    Update Delivery Status:
-                </label>
-                <select
-                    value={order.deliveryStatus}
-                    onChange={handleStatusChange}
-                    disabled={updating}
-                    className="bg-gray-800 text-white border border-gray-600 rounded-md px-3 py-2  focus:outline-none focus:ring-1 focus:ring-gray-500"
-                >
-                    {statuses.map((status) => {
-                        const currentIndex = statuses.indexOf(order.deliveryStatus);
-                        const statusIndex = statuses.indexOf(status);
-
-                        return (
-                            <option key={status} value={status} disabled={statusIndex < currentIndex}>
-                                {status}
-                            </option>
-                        )
-                    })}
-                </select>
+        <div className="max-w-6xl mx-auto px-6 py-10 text-gray-200">
+            {/* Header */}
+            <div className="mb-6 flex items-center justify-between">
+                <div>
+                    <div
+                        className="flex items-center gap-2 cursor-pointer text-sm text-gray-400 hover:text-white"
+                        onClick={() => router.push("/dashboard/orders")}
+                    >
+                        <ArrowLeft size={16} />
+                        Back
+                    </div>
+                    <h1 className="text-2xl font-bold mt-2">
+                        Order #{order.id.slice(-6)}
+                    </h1>
+                </div>
             </div>
 
-            {/* delivery progress */}
+            {/* Delivery Progress */}
             <div className="mb-6">
                 <div className="flex items-center justify-between text-xs font-medium text-gray-500 mb-2">
-                    {statuses.map((step, idx) => {
-                        const currentIndex = statuses.indexOf(order.deliveryStatus);
-                        const passed = statuses.indexOf(order.deliveryStatus) >= idx
+                    {deliverySteps.map((step, idx) => {
+                        const currentIndex = deliverySteps.indexOf(order.deliveryStatus);
+                        const passed = deliverySteps.indexOf(order.deliveryStatus) >= idx
                         return (
-                            <div key={step} className={`flex-1 text-left ${currentIndex > statuses.indexOf(order.deliveryStatus) ? "text-blue-600" : passed ? "text-green-600" : "text-gray-400"} `}>
+                            <div key={step} className={`flex-1 text-left ${currentIndex > deliverySteps.indexOf(order.deliveryStatus) ? "text-blue-600" : passed ? "text-green-600" : "text-gray-400"} `}>
                                 {step}
                             </div>
                         );
                     })}
                 </div>
                 <div className="flex items-center">
-                    {statuses.map((step, idx) => {
-                        const reached = idx <= statuses.indexOf(order.deliveryStatus)
+                    {deliverySteps.map((step, idx) => {
+                        const reached = idx <= deliverySteps.indexOf(order.deliveryStatus)
                         return (
                             <div key={step} className="flex-1 flex items-center">
                                 <div
@@ -129,7 +92,7 @@ const Page = () => {
                                         : "bg-gray-300"
                                     }`}
                                 />
-                                {idx !== statuses.length - 1 && (
+                                {idx !== deliverySteps.length - 1 && (
                                     <div className={`flex-1 h-1 ${reached ? "bg-blue-500" : "bg-gray-200"}`} />
                                 )}
                             </div>
@@ -138,101 +101,59 @@ const Page = () => {
                 </div>
             </div>
 
-            {/* payment details */}
-            <div className="mb-6 text-sm space-y-1 text-gray-300">
-                <p>
-                    <span className="font-semibold">Payment Status:</span>{" "}
-                    <span className="text-green-600 font-medium">
-                        {order.status}
-                    </span>
-                </p>
-                <p>
-                    <span className="font-medium">Total Paid:</span>
-                    <span className="font-medium">₹{order.total.toFixed(2)}</span>
-                </p>
-
-                {order.discountAmount > 0 && (
+            {/* Order Info Card */}
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-8 grid md:grid-cols-2 gap-6">
+                <div className="space-y-2 text-sm">
                     <p>
-                      <span className="font-semibold">Discount Applied:</span>{" "}  
-                      <span className="text-green-400">
-                        -₹{order.discountAmount.toFixed(2)} (
-                            {order.couponCode?.discountType === "percentage" ? `${order.couponCode.discountValue}%` : `₹${order.couponCode.discountValue}`}{" "}
-                            off
-                        )
-                      </span>
+                        <span className="text-gray-400">Payment Status:</span>{" "}
+                        <span
+                            className={`font-medium ${order.status === "Paid"
+                                ? "text-green-400"
+                                : order.status === "Failed"
+                                    ? "text-red-400"
+                                    : "text-yellow-400"
+                                }`}
+                        >
+                            {order.status}
+                        </span>
                     </p>
-                )}
-
-                {order.couponCode && (
                     <p>
-                      <span className="font-semibold">Coupon Used:</span>{" "}
-                      <span className="text-blue-400">{order.couponCode.public_name}</span>  
+                        <span className="text-gray-400">Total:</span>{" "}
+                        ₹{order.total.toFixed(2)}
                     </p>
-                )}
-
-                <p>
-                    <span className="font-medium">Date:</span>{" "}
-                    {new Date(order.createdAt).toLocaleDateString()}
-                </p>
+                    <p>
+                        <span className="text-gray-400">Date:</span>{" "}
+                        {new Date(order.createdAt).toLocaleString()}
+                    </p>
+                    <p>
+                        <span className="text-gray-400">User ID:</span>{" "}
+                        {order.userId}
+                    </p>
+                </div>
             </div>
 
-            {/* shipping address */}
-            {order.shippingAddress && (
-                <div className="mb-6 text-sm text-gray-300">
-                    <h2 className="font-semibold mb-2">Shipping Address</h2>
-                    <p>{order.shippingAddress.name}</p>
-                    <p>
-                        {order.shippingAddress.street}, {order.shippingAddress.city}, {" "}
-                        {order.shippingAddress.zip}
-                    </p>
-                    <p>{order.shippingAddress.country}</p>
-                </div>
-            )}
-            
-
-            {/* order items */}
-            <div>
-                <h2 className="font-semibold text-gray-300 mb-4 text-lg">
-                    Order Items
-                </h2>
-
+            {/* Items */}
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                <h2 className="text-lg font-semibold mb-4">Order Items</h2>
                 <div className="space-y-4">
                     {order.items.map((item: any) => (
                         <div
                             key={item.productId}
-                            className="border border-gray-200 rounded-lg p-4 flex items-center gap-4"
+                            className="flex items-center gap-4 border border-gray-800 rounded-lg p-4 hover:border-gray-700 transition"
                         >
                             <img
                                 src={item.product?.images[0]?.url || "/placeholder.png"}
-                                alt={item.product?.title || "Product Image"}
-                                className="w-16 h-16 rounded-md border border-gray-200 object-cover"
+                                className="w-16 h-16 rounded-lg object-cover"
                             />
                             <div className="flex-1">
-                                <p className="text-gray-200 font-medium">
-                                    {item.product?.title || "unnamed product"}
+                                <p className="font-medium">
+                                    {item.product?.title || "Unnamed Product"}
                                 </p>
                                 <p className="text-xs text-gray-400">
                                     Quantity: {item.quantity}
                                 </p>
-                                {item.selectedOptions && (
-                                    Object.keys(item.selectedOptions).length > 0 && (
-                                        <div className="text-xs text-gray-400 mt-1">
-                                            {Object.entries(item.selectedOptions).map(
-                                                ([key, value] : [string, any]) => 
-                                                    value && (
-                                                        <span className="mr-3" key={key}>
-                                                            <span className="font-medium capitalize">
-                                                                {key}:
-                                                            </span>{" "}
-                                                            {value}
-                                                        </span>
-                                                    )
-                                            )}
-                                        </div>
-                                    )
-                                )}
                             </div>
-                            <p className="text-gray-200 font-medium text-sm">
+                            <p className="font-medium text-sm">
                                 ₹{item.price.toFixed(2)}
                             </p>
                         </div>
@@ -240,7 +161,7 @@ const Page = () => {
                 </div>
             </div>
         </div>
-    )
-} 
+    );
+};
 
-export default Page
+export default AdminOrderPage;

@@ -1,7 +1,7 @@
 import { isAdmin } from "@packages/middlewares/authorizedRoles";
 import isAuthenticated from "@packages/middlewares/isAuthenticated";
 import express, { Router } from "express";
-import { addNewAdmin, getAllAdmins, getAllCUstomizations, getALlEvents, getAllProducts, getAllSellers, getAllUsers, getDashboardStats, getDeviceUsageAnalytics, getGeographicalAnalytics, getRevenueAnalytics } from "../controllers/admin.controllers";
+import { addNewAdmin, getAllAdmins, getAllCUstomizations, getALlEvents, getAllProducts, getAllSellers, getAllUsers, getDeviceUsageAnalytics } from "../controllers/admin.controllers";
 
 const router: Router = express.Router()
 
@@ -14,8 +14,5 @@ router.get("/get-all-users", isAuthenticated, isAdmin, getAllUsers)
 router.get("/get-all-sellers", isAuthenticated, isAdmin, getAllSellers)
 
 router.get("/device-usage", isAuthenticated, isAdmin, getDeviceUsageAnalytics);
-router.get("/revenue", isAuthenticated, isAdmin, getRevenueAnalytics);
-router.get("/geographical", isAuthenticated, isAdmin, getGeographicalAnalytics);
-router.get("/dashboard-stats", isAuthenticated, isAdmin, getDashboardStats);
 
 export default router

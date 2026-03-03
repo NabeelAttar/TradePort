@@ -192,7 +192,7 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
                     id: true,
                     name: true,
                     email: true,
-                    // role: true,
+                    role: true,
                     createdAt: true,
                 }
             }),
@@ -264,176 +264,48 @@ export const getAllSellers = async (req: Request, res: Response, next: NextFunct
 // Get device usage analytics
 export const getDeviceUsageAnalytics = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // Get user analytics data
         const userAnalytics = await prisma.userAnalytics.findMany({
-            select: {
-                device: true
-            }
+            select: { device: true }
         });
+        console.log("UserAnalytics count:", userAnalytics.length);
+console.log("UserAnalytics sample:", userAnalytics[0]);
 
-        // Count devices
         const deviceCounts = userAnalytics.reduce((acc: any, analytics) => {
-            const device = analytics.device || 'Unknown';
-            acc[device] = (acc[device] || 0) + 1;
+            const rawDevice = analytics.device || '';
+            const deviceType = rawDevice.split(' - ')[0]?.trim().toLowerCase() || 'unknown';
+            acc[deviceType] = (acc[deviceType] || 0) + 1;
             return acc;
         }, {});
 
-        const totalDevices = Object.values(deviceCounts).reduce((sum: number, count: any) => sum + count, 0);
+        const totalDevices = Object.values(deviceCounts)
+            .reduce((sum: number, count: any) => sum + count, 0);
 
-        // Format data for chart
-        const deviceData = [
-            { name: "Desktop", value: Math.round((deviceCounts['Desktop'] || 0) / totalDevices * 100), color: "#3b82f6" },
-            { name: "Mobile", value: Math.round((deviceCounts['Mobile'] || 0) / totalDevices * 100), color: "#22c55e" },
-            { name: "Tablet", value: Math.round((deviceCounts['Tablet'] || 0) / totalDevices * 100), color: "#eab308" },
-        ].filter(item => item.value > 0);
+        if (totalDevices === 0) {
+            return res.status(200).json({ success: true, data: [] });
+        }
+
+        const normalizedNameMap: any = {
+            mobile: "Mobile",
+            desktop: "Desktop",
+            tablet: "Tablet",
+        };
+
+        const deviceData = Object.entries(deviceCounts).map(([key, count]: any) => ({
+            name: normalizedNameMap[key] || key,
+            value: Math.round((count / totalDevices) * 100),
+            color:
+                key === "desktop"
+                    ? "#3b82f6"
+                    : key === "mobile"
+                    ? "#22c55e"
+                    : key === "tablet"
+                    ? "#eab308"
+                    : "#94a3b8",
+        }));
 
         res.status(200).json({
             success: true,
             data: deviceData
-        });
-    } catch (error) {
-        return next(error);
-    }
-};
-
-// Get revenue analytics
-export const getRevenueAnalytics = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const months = parseInt(req.query.months as string) || 6;
-        
-        const startDate = new Date();
-        startDate.setMonth(startDate.getMonth() - months);
-
-        const orders = await prisma.orders.findMany({
-            where: {
-                createdAt: {
-                    gte: startDate
-                },
-                status: 'Paid'
-            },
-            select: {
-                total: true,
-                createdAt: true
-            }
-        });
-
-        // Group by month
-        const monthlyData = orders.reduce((acc: any, order) => {
-            const date = new Date(order.createdAt);
-            const monthName = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-            
-            if (!acc[monthName]) {
-                acc[monthName] = { month: monthName, revenue: 0, orders: 0 };
-            }
-            
-            acc[monthName].revenue += order.total || 0;
-            acc[monthName].orders += 1;
-            
-            return acc;
-        }, {});
-
-        const chartData = Object.values(monthlyData);
-
-        res.status(200).json({
-            success: true,
-            data: chartData
-        });
-    } catch (error) {
-        return next(error);
-    }
-};
-
-// Get geographical analytics
-export const getGeographicalAnalytics = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const [userAnalytics, totalUsers, totalSellers] = await Promise.all([
-            prisma.userAnalytics.findMany({
-                select: {
-                    country: true,
-                    city: true
-                }
-            }),
-            prisma.users.count(),
-            prisma.sellers.count()
-        ]);
-
-        // Group by country
-        const countryCounts = userAnalytics.reduce((acc: any, analytics) => {
-            const country = analytics.country || 'Unknown';
-            acc[country] = (acc[country] || 0) + 1;
-            return acc;
-        }, {});
-
-        // Get top countries
-        const topCountries = Object.entries(countryCounts)
-            .sort(([,a], [,b]) => (b as number) - (a as number))
-            .slice(0, 8)
-            .map(([country, users]) => ({
-                country,
-                users: users as number,
-                sellers: Math.round(Math.random() * totalSellers * 0.3) // Simplified - in real app, track seller locations
-            }));
-
-        res.status(200).json({
-            success: true,
-            data: {
-                countries: topCountries,
-                totalUsers,
-                totalSellers
-            }
-        });
-    } catch (error) {
-        return next(error);
-    }
-};
-
-// Get dashboard overview stats
-export const getDashboardStats = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const [
-            totalUsers,
-            totalSellers,
-            totalOrders,
-            totalRevenue,
-            recentOrders,
-            topProducts
-        ] = await Promise.all([
-            prisma.users.count(),
-            prisma.sellers.count(),
-            prisma.orders.count(),
-            prisma.orders.aggregate({
-                _sum: { total: true }
-            }),
-            prisma.orders.findMany({
-                take: 5,
-                orderBy: { createdAt: 'desc' },
-                include: {
-                    user: {
-                        select: { name: true }
-                    }
-                }
-            }),
-            prisma.products.findMany({
-                take: 5,
-                orderBy: { totalSales: 'desc' },
-                select: {
-                    title: true,
-                    totalSales: true,
-                    sale_price: true
-                }
-            })
-        ]);
-
-        res.status(200).json({
-            success: true,
-            data: {
-                totalUsers,
-                totalSellers,
-                totalOrders,
-                totalRevenue: totalRevenue._sum.total || 0,
-                recentOrders,
-                topProducts
-            }
         });
     } catch (error) {
         return next(error);
