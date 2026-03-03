@@ -1,4 +1,3 @@
-import React from 'react'
 import { activeSidebarItem } from '../configs/constants'
 import { useAtom } from 'jotai'
 

@@ -648,20 +648,37 @@ export const getAdminOrders = async (req: any, res: Response, next: NextFunction
     try {
         const orders = await prisma.orders.findMany({
             include: {
-                user: true,
-                shop: true,
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        avatar: true
+                    }
+                },
+                shop: {
+                    select: {
+                        id: true,
+                        name: true,
+                        sellers: {
+                            select: {
+                                name: true,
+                                email: true
+                            }
+                        }
+                    }
+                }
             },
             orderBy: {
                 createdAt: "desc"
             }
-        })
+        });
 
         res.status(200).json({
             success: true,
             orders
-        })
-
+        });
     } catch (error) {
-        return next(error)
+        return next(error);
     }
-}
+};

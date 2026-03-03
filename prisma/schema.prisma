@@ -19,11 +19,17 @@ model images {
   products   products? @relation(fields: [productsId], references: [id])
 }
 
+enum userRole {
+  admin
+  user
+}
+
 model users {
   id            String        @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   email         String        @unique
   password      String?
+  role          userRole
   following     String[]
   avatar        images?
   createdAt     DateTime      @default(now())
@@ -34,8 +40,8 @@ model users {
 }
 
 model userAnalytics {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId         String   @unique
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String    @unique
   country        String?
   city           String?
   device         String?
@@ -43,8 +49,8 @@ model userAnalytics {
   lastTrained    DateTime? @default(now())
   actions        Json?
   recommendation Json?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model shopReviews {
@@ -82,9 +88,9 @@ model shops {
 }
 
 model sellers {
-  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
   name               String
-  email              String   @unique
+  email              String    @unique
   phone_number       String
   country            String
   password           String
@@ -92,20 +98,20 @@ model sellers {
   bankAccountNumber  String?
   bankAccountCountry String?
   accountCurrency    String?
-  bankBalance        Float      @default(0) // pending, verified, active
+  bankBalance        Float     @default(0) // pending, verified, active
   shop               shops?
-  payouts payouts[]
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  payouts            payouts[]
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 }
 
 model site_config {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  categories    String[]
-  subCategories Json
-  logo String?
-  banner String?  
-  platformBalance Float @default(0)
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  categories      String[]
+  subCategories   Json
+  logo            String?
+  banner          String?
+  platformBalance Float    @default(0)
 }
 
 model discount_codes {
@@ -182,8 +188,8 @@ model orders {
   shopId String @db.ObjectId
   shop   shops  @relation(fields: [shopId], references: [id])
 
-  razorpayOrderId   String? 
-  razorpayPaymentId String? 
+  razorpayOrderId   String?
+  razorpayPaymentId String?
   paymentCapturedAt DateTime?
 
   total             Float
@@ -193,9 +199,9 @@ model orders {
   status            String // pending, paid, shipped, delivered, cancelled
   deliveryStatus    String?
   items             orderItems[] @relation("OrderItemsRelation") // array of products with qty + price snapshot
-  payout payouts? @relation("OrderToPayout")   // 👈 THIS FIXES YOUR ERROR
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  payout            payouts?     @relation("OrderToPayout") // 👈 THIS FIXES YOUR ERROR
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 }
 
 model orderItems {
@@ -229,15 +235,15 @@ model address {
 }
 
 model notifications {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  creatorId     String   @db.ObjectId
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  creatorId     String  @db.ObjectId
   receiverId    String
   redirect_link String?
   title         String
   message       String
-  status String @default("unread")
+  status        String  @default("unread")
 
-  createdAt     DateTime @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
@@ -283,19 +289,19 @@ enum payoutStatus {
 model payouts {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
-  sellerId String @db.ObjectId
+  sellerId String  @db.ObjectId
   seller   sellers @relation(fields: [sellerId], references: [id])
 
-  orderId String @db.ObjectId @unique
-  order   orders  @relation("OrderToPayout", fields: [orderId], references: [id])
+  orderId String @unique @db.ObjectId
+  order   orders @relation("OrderToPayout", fields: [orderId], references: [id])
 
-  grossAmount   Float
-  platformFee   Float
-  sellerAmount  Float
+  grossAmount  Float
+  platformFee  Float
+  sellerAmount Float
 
   status payoutStatus @default(pending)
 
-  retryCount Int @default(0)
+  retryCount Int     @default(0)
   lastError  String?
 
   scheduledAt DateTime?

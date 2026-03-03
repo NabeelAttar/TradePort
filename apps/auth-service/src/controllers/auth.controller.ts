@@ -53,7 +53,7 @@ export const verifyUser = async (req: Request, res: Response, next: NextFunction
         
         // create account as all security checks are done
         await prisma.users.create({
-            data: {name, email, password: hashedPassword},
+            data: {name, email, password: hashedPassword, role: "user"},
         });
         
         res.status(201).json({
@@ -133,7 +133,7 @@ export const refreshToken = async (req: any, res: Response, next: NextFunction) 
         }
 
         let account;
-        if(decoded.role === "user"){
+        if(decoded.role === "user" || decoded.role === "admin"){
            account = await prisma.users.findUnique({where : {id : decoded.id}});
         } else if(decoded.role === "seller"){
            account = await prisma.sellers.findUnique({
@@ -142,13 +142,13 @@ export const refreshToken = async (req: any, res: Response, next: NextFunction) 
            }); 
         }
         if(!account){
-            return new AuthError("Forbidden! User/Seller not found.");
+            return new AuthError("Forbidden! User/Seller/Admin not found.");
         }
 
         // everything is fine now generate a new accessToken
         const newAccessToken = jwt.sign({ id: decoded.id, role: decoded.role }, process.env.ACCESS_TOKEN_SECRET as string, { expiresIn: "15m" });
         
-        if(decoded.role==="user"){
+        if(decoded.role==="user" || decoded.role === "admin"){
             setCookie(res, "access_token", newAccessToken);
         }else if(decoded.role==="seller"){
             setCookie(res, "seller_access_token", newAccessToken);
@@ -544,7 +544,10 @@ export const loginAdmin = async (req: Request, res: Response, next: NextFunction
             return next(new AuthError("Invalid email or password"))
         }
 
-        // // const isAdmin = user.role === "Admin"
+        const isAdmin = user.role === "admin"
+        if(!user.role || !isAdmin){
+            return next(new AuthError("Invalid access"))
+        }
         // if(!isAdmin){
         //     sendLog({
         //         type: "error",
@@ -700,7 +703,7 @@ export const getUserAddresses = async (req: any, res: Response, next: NextFuncti
             addresses
         })
 
-    } catch (error) {
+    } catch (error) {   
         return next(error)
     }
 }
