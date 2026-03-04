@@ -17,19 +17,27 @@ const isAuthenticated = async (req: any, res: Response, next: NextFunction) => {
 
         let account;
         if(decoded.role === "user" || decoded.role === "admin"){
-           account = await prisma.users.findUnique({where : {id : decoded.id}});
-           req.user = account; 
+            account = await prisma.users.findUnique({where : {id : decoded.id}});
+            if(!account){
+                return res.status(401).json({message : "Account not found!"});
+            }
+            if(account.isBanned){
+                return res.status(403).json({
+                    message: "Your account has been suspended. Contact support."
+                });
+            }
+            req.user = account; 
         } else if(decoded.role === "seller"){
-           account = await prisma.sellers.findUnique({
-            where : {id : decoded.id},
-            include: {shop: true},
-           });
+            account = await prisma.sellers.findUnique({
+                where : {id : decoded.id},
+                include: {shop: true},
+            });
+            if(!account){
+                return res.status(401).json({message : "Account not found!"});
+            }
            req.seller = account;
         } 
-
-        if(!account){
-            return res.status(401).json({message : "Account not found!"});
-        }
+        
 
         req.role = decoded.role;
 

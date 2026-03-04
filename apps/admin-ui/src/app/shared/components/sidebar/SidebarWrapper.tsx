@@ -110,7 +110,7 @@ const SidebarWrapper = () => {
                             />
                             <SidebarItems
                                 isActive={activeSidebar === '/dashboard/management'}
-                                title='management'
+                                title='Management'
                                 href='/dashboard/management'
                                 icon={<Settings size={22} color={getIconColor("/dashboard/management")} />}
                             />

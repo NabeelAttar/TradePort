@@ -32,6 +32,11 @@ model users {
   role          userRole
   following     String[]
   avatar        images?
+
+  isBanned      Boolean       @default(false)
+  bannedAt      DateTime?
+  bannedReason  String?
+
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   shopReviews   shopReviews[]

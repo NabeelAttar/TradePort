@@ -123,7 +123,10 @@ const AdminProductsPage = () => {
             header: "Start",
             cell: ({ row }: any) => (
                 <span className='text-purple-400'>
-                    {row.original.starting_date}
+                    {row.original.starting_date 
+                        ? new Date(row.original.starting_date).toLocaleDateString()
+                        : "No start date"
+                    }
                 </span>
             )
         },
@@ -132,7 +135,10 @@ const AdminProductsPage = () => {
             header: "End",
             cell: ({ row }: any) => (
                 <span className='text-purple-400'>
-                    {row.original.ending_date}
+                    {row.original.ending_date 
+                        ? new Date(row.original.ending_date).toLocaleDateString()
+                        : "No end date"
+                    }
                 </span>
             )
         },
