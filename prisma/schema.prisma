@@ -25,17 +25,17 @@ enum userRole {
 }
 
 model users {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  email         String        @unique
-  password      String?
-  role          userRole
-  following     String[]
-  avatar        images?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String   @unique
+  password  String?
+  role      userRole
+  following String[]
+  avatar    images?
 
-  isBanned      Boolean       @default(false)
-  bannedAt      DateTime?
-  bannedReason  String?
+  isBanned     Boolean   @default(false)
+  bannedAt     DateTime?
+  bannedReason String?
 
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -314,4 +314,40 @@ model payouts {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// can add group chat in the future
+model conversationGroup {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  isGroup        Boolean  @default(false)
+  name           String?
+  creatorId      String
+  participantsId String[] @db.ObjectId
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model participant {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  converstationId String    @db.ObjectId
+  userId          String?   @db.ObjectId
+  sellerId        String?   @db.ObjectId
+  lastSeenAt      DateTime?
+  isOnline        Boolean   @default(false)
+  unreadCount     Int       @default(0)
+  muted           Boolean   @default(false)
+  joinedAt        DateTime  @default(now())
+}
+
+model message {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  conversationId String   @db.ObjectId
+  senderId        String   @db.ObjectId
+  senderType      String
+  content         String?
+  attachments     String[]
+  status          String   @default("sent")
+  createdAt       DateTime @default(now())
+
+  @@unique([conversationId, senderId, content, createdAt])
 }

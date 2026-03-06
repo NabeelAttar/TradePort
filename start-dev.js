@@ -26,6 +26,9 @@ function run(command) {
 }
 
 (async () => {
+  run("nx serve @trade-port/chatting-service");
+  await waitForPort(6006);
+
   run("nx serve @trade-port/admin-service");
   await waitForPort(6005);
 

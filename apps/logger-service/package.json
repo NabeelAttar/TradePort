@@ -1,0 +1,28 @@
+{
+  "name": "@trade-port/logger-service",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "targets": {
+      "serve": {
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "@trade-port/logger-service:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "@trade-port/logger-service:build:development"
+          },
+          "production": {
+            "buildTarget": "@trade-port/logger-service:build:production"
+          }
+        }
+      }
+    }
+  }
+}
