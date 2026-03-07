@@ -14,7 +14,6 @@ model images {
   userId     String?   @unique @db.ObjectId
   user       users?    @relation(fields: [userId], references: [id])
   shopId     String?   @unique @db.ObjectId
-  shops      shops?    @relation(fields: [shopId], references: [id])
   productsId String?   @db.ObjectId
   products   products? @relation(fields: [productsId], references: [id])
 }
@@ -75,7 +74,7 @@ model shops {
   name          String
   bio           String?
   category      String
-  avatar        images?
+  avatar        String?
   coverBanner   String?
   address       String
   opening_hours String?
@@ -329,7 +328,7 @@ model conversationGroup {
 
 model participant {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  converstationId String    @db.ObjectId
+  conversationId String    @db.ObjectId
   userId          String?   @db.ObjectId
   sellerId        String?   @db.ObjectId
   lastSeenAt      DateTime?

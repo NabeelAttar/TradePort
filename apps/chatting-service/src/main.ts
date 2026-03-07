@@ -7,6 +7,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser'
 import { createWebSocketServer } from './webSocket';
 import { startConsumer } from './chat-message.consumer';
+import router from './routes/chatting.routes';
 
 const app = express();
 
@@ -16,6 +17,9 @@ app.use(cookieParser())
 app.get('/', (req, res) => {
   res.send({ message: 'Welcome to chatting-service!' });
 });
+
+// routes
+app.use("/api", router)
 
 const port = process.env.PORT || 6006;
 

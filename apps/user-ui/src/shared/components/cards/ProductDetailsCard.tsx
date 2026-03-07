@@ -8,12 +8,15 @@ import { useStore } from 'apps/user-ui/src/app/stores'
 import useUser from 'apps/user-ui/src/hooks/useUser'
 import useLocationTracking from 'apps/user-ui/src/hooks/useLocationTracking'
 import useDeviceTracking from 'apps/user-ui/src/hooks/useDeviceTracking'
+import axiosInstance from 'apps/user-ui/src/utils/axiosInstance'
+import { isProtected } from 'apps/user-ui/src/utils/protected'
 
 const ProductDetailsCard = ({data, setOpen} : {data:any, setOpen: (open:boolean) => void}) => {
     const [activeImage, setActiveImage] = useState(0)
     const [isSelected, setIsSelected] = useState(data?.colors?.[0] || "");
     const [isSizeSelected, setIsSizeSelected] = useState(data?.sizes?.[0] || "");
     const [quantity, setQuantity] = useState(1);
+    const [isLoading, setIsLoading] = useState(false)
 
     const addToCart = useStore((state:any) => state.addToCart);
     const addToWishlist = useStore((state:any) => state.addToWishlist);
@@ -34,6 +37,21 @@ const ProductDetailsCard = ({data, setOpen} : {data:any, setOpen: (open:boolean)
     estimatedDelivery.setDate(estimatedDelivery.getDate() + 5);
 
     const router = useRouter();
+
+    const handleChat = async () => {
+        if(isLoading){
+            return
+        }
+        setIsLoading(true)
+        try {
+            const res = await axiosInstance.post('/chatting/api/create-user-conversationGroup', {sellerId: data?.Shop?.sellerId}, isProtected)
+            router.push(`/inbox?conversation=${res.data.conversation.id}`)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
   return (
     <div className='fixed flex items-center justify-center top-0 left-0 h-screen w-full bg-[#0000001d] z-50' onClick={() => setOpen(false)}>
@@ -69,7 +87,7 @@ const ProductDetailsCard = ({data, setOpen} : {data:any, setOpen: (open:boolean)
                                 </p>
                             </div>
                         </div> 
-                        <button type="button" className='flex cursor-pointer items-center gap-2 px-4 py-2 font-semibold text-white rounded-lg bg-blue-600 hover:bg-blue-700 hover:scale-110 transition' onClick={() => router.push(`/inbox?shopId=${data?.Shop?.id}`)}>
+                        <button type="button" className='flex cursor-pointer items-center gap-2 px-4 py-2 font-semibold text-white rounded-lg bg-blue-600 hover:bg-blue-700 hover:scale-110 transition' onClick={() => handleChat()}>
                             <MessageCircle/> Chat with Seller
                         </button>
                         <button type="button" className='w-full absolute cursor-pointer right-[-5px] top-[-5px] flex justify-end my-2 mt-[-10px]'>
