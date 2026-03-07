@@ -10,6 +10,8 @@ import useLocationTracking from '../../hooks/useLocationTracking';
 import useDeviceTracking from '../../hooks/useDeviceTracking';
 import ProductCard from '../components/cards/ProductCard';
 import axiosInstance from '../../utils/axiosInstance';
+import { isProtected } from '../../utils/protected';
+import { useRouter } from 'next/navigation';
 
 type Props = { productDetails: any };
 
@@ -155,29 +157,32 @@ export default function ProductDetails({ productDetails }: Props) {
     const [quantity, setQuantity] = useState(1);
     const [priceRange, setPriceRange] = useState([productDetails?.sale_price, 10000,])
     const [recommendedProducts, setRecommendedProducts] = useState([])
-    
-    const addToCart = useStore((state:any) => state.addToCart);
-    const addToWishlist = useStore((state:any) => state.addToWishlist);
-    const removeFromWishlist = useStore((state:any) => state.removeFromWishlist);
 
-    const wishlist = useStore((state:any) => state.wishlist);
-    const isWishlisted = wishlist.some((item:any) => item.id === productDetails.id);
-    
-    const cart = useStore((state:any) => state.cart);
-    const isInCart = cart.some((item:any) => item.id === productDetails.id);
+    const addToCart = useStore((state: any) => state.addToCart);
+    const addToWishlist = useStore((state: any) => state.addToWishlist);
+    const removeFromWishlist = useStore((state: any) => state.removeFromWishlist);
+
+    const wishlist = useStore((state: any) => state.wishlist);
+    const isWishlisted = wishlist.some((item: any) => item.id === productDetails.id);
+
+    const cart = useStore((state: any) => state.cart);
+    const isInCart = cart.some((item: any) => item.id === productDetails.id);
+
+    const [isLoading, setIsLoading] = useState(true)
+    const router = useRouter()
 
     const { user } = useUser();
     const location = useLocationTracking();
     const deviceInfo = useDeviceTracking();
 
     const prevImage = () => {
-        if(currentIndex > 0){
+        if (currentIndex > 0) {
             setCurrentIndex(currentIndex - 1);
             setCurrentImage(productDetails?.images[currentIndex - 1]);
         }
     }
     const nextImage = () => {
-        if(currentIndex < productDetails?.images.length - 1){
+        if (currentIndex < productDetails?.images.length - 1) {
             setCurrentIndex(currentIndex + 1);
             setCurrentImage(productDetails?.images[currentIndex + 1]);
         }
@@ -203,9 +208,24 @@ export default function ProductDetails({ productDetails }: Props) {
     }
 
     useEffect(() => {
-      fetchFilteredProducts()
+        fetchFilteredProducts()
     }, [priceRange])
-    
+
+    const handleChat = async () => {
+        if (isLoading) {
+            return
+        }
+        setIsLoading(true)
+        try {
+            const res = await axiosInstance.post('/chatting/api/create-user-conversationGroup', { sellerId: productDetails?.Shop?.sellerId }, isProtected)
+            router.push(`/inbox?conversation=${res.data.conversation.id}`)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
 
     return (
         <div className="w-full bg-[#f5f5f5] py-5">
@@ -299,15 +319,15 @@ export default function ProductDetails({ productDetails }: Props) {
                             </button>
                         )}
                         <div className='flex gap-2 overflow-x-auto'>
-                            {productDetails?.images?.map((img:any, index:number) => (
-                                <Image 
-                                    src={img?.url || "https://ik.imagekit.io/tgk87wamq/default-image.jpg"} 
-                                    alt='Thumbnail' 
-                                    key={index} 
-                                    width={60} 
-                                    height={60} 
+                            {productDetails?.images?.map((img: any, index: number) => (
+                                <Image
+                                    src={img?.url || "https://ik.imagekit.io/tgk87wamq/default-image.jpg"}
+                                    alt='Thumbnail'
+                                    key={index}
+                                    width={60}
+                                    height={60}
                                     className={`cursor-pointer border rounded-lg p-1 ${currentImage === img ? "border-blue-500" : "border-gray-300"}`}
-                                    onClick={() => {setCurrentIndex(index); setCurrentImage(img)}}
+                                    onClick={() => { setCurrentIndex(index); setCurrentImage(img) }}
                                 />
                             ))}
                         </div>
@@ -318,7 +338,7 @@ export default function ProductDetails({ productDetails }: Props) {
                         )}
                     </div>
                 </div>
-                
+
                 {/* middle colum - product details */}
                 <div className='p-4'>
                     <h1 className='text-xl mb-2 font-medium'>
@@ -330,15 +350,15 @@ export default function ProductDetails({ productDetails }: Props) {
                             <Link href={"#reviews"} className='text-blue-500 hover:underline'>(1 review)</Link>
                         </div>
                         <div className=''>
-                            <Heart 
-                                size={25} 
-                                fill={isWishlisted ? "red" : "transparent"} 
-                                className='cursor-pointer' color={isWishlisted ? "transparent" : "#777"} 
+                            <Heart
+                                size={25}
+                                fill={isWishlisted ? "red" : "transparent"}
+                                className='cursor-pointer' color={isWishlisted ? "transparent" : "#777"}
                                 onClick={() => {
-                                    isWishlisted 
-                                    ? removeFromWishlist(productDetails.id, user, location, deviceInfo)
-                                    : addToWishlist({...productDetails, quantity, selectedoptions: {color: isSelected, size: isSelected}}, user, location, deviceInfo)
-                                }} 
+                                    isWishlisted
+                                        ? removeFromWishlist(productDetails.id, user, location, deviceInfo)
+                                        : addToWishlist({ ...productDetails, quantity, selectedoptions: { color: isSelected, size: isSelected } }, user, location, deviceInfo)
+                                }}
                             />
                         </div>
                     </div>
@@ -370,12 +390,12 @@ export default function ProductDetails({ productDetails }: Props) {
                                     <div>
                                         <strong>Color:</strong>
                                         <div className='flex gap-2 mt-1'>
-                                            {productDetails?.colors?.map((color:string, index:number) => (
-                                                <button 
-                                                    key={index} 
+                                            {productDetails?.colors?.map((color: string, index: number) => (
+                                                <button
+                                                    key={index}
                                                     className={`w-8 h-8 cursor-pointer rounded-full border-2 transition ${isSelected === color ? "border-gray-400 scale-110 shadow-md" : "border-transparent"}`}
                                                     onClick={() => setIsSelected(color)}
-                                                    style={{backgroundColor: color}}
+                                                    style={{ backgroundColor: color }}
                                                 />
 
                                             ))}
@@ -388,9 +408,9 @@ export default function ProductDetails({ productDetails }: Props) {
                                     <div>
                                         <strong>Size:</strong>
                                         <div className='flex gap-2 mt-1'>
-                                            {productDetails?.sizes?.map((size:string, index:number) => (
-                                                <button 
-                                                    key={index} 
+                                            {productDetails?.sizes?.map((size: string, index: number) => (
+                                                <button
+                                                    key={index}
                                                     className={`px-4 py-1 cursor-pointer rounded-md border-2 transition ${isSizeSelected === size ? "bg-gray-800 text-white" : "bg-gray-300 text-black"}`}
                                                     onClick={() => setIsSizeSelected(size)}
                                                 >
@@ -406,16 +426,16 @@ export default function ProductDetails({ productDetails }: Props) {
                         <div className='mt-6'>
                             <div className='flex items-center gap-3'>
                                 <div className='flex items-center rounded-md'>
-                                    <button 
+                                    <button
                                         className='px-3 cursor-pointer py-1 bg-gray-300 hover:bg-gray-400 text-black font-semibold rounded-l-md'
-                                        onClick={() => setQuantity((prev) => Math.max(1,prev-1))}
+                                        onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
                                     >
                                         -
                                     </button>
                                     <span className='px-4 bg-gray-100 py-1'>{quantity}</span>
-                                    <button 
+                                    <button
                                         className='px-3 cursor-pointer py-1 bg-gray-300 hover:bg-gray-400 text-black font-semibold rounded-l-md'
-                                        onClick={() => setQuantity((prev) => prev+1)}
+                                        onClick={() => setQuantity((prev) => prev + 1)}
                                     >
                                         +
                                     </button>
@@ -434,12 +454,12 @@ export default function ProductDetails({ productDetails }: Props) {
                                 )}
                             </div>
 
-                            <button 
+                            <button
                                 className={`flex mt-6 items-center gap-2 px-5 py-[10px] bg-[#ff5722] hover:bg-[#e64a19] text-white font-medium rounded-lg transition ${isInCart ? "cursor-not-allowed" : "cursor-pointer"}`}
                                 disabled={isInCart || productDetails?.stock === 0}
-                                onClick={() => addToCart({...productDetails, quantity, selectedOptions: {color: isSelected, size: isSizeSelected}}, user, location, deviceInfo)}
+                                onClick={() => addToCart({ ...productDetails, quantity, selectedOptions: { color: isSelected, size: isSizeSelected } }, user, location, deviceInfo)}
                             >
-                                <ShoppingCartIcon size={18}/>
+                                <ShoppingCartIcon size={18} />
                                 Add to Cart
                             </button>
                         </div>
@@ -460,7 +480,7 @@ export default function ProductDetails({ productDetails }: Props) {
 
                     <div className='mb-1 px-3 pb-1 border-b border-b-gray-100'>
                         <span className='text-sm text-gray-600'>
-                            Return & Warranty 
+                            Return & Warranty
                         </span>
                         <div className='flex items-center text-gray-600 gap-1 '>
                             <Package size={18} className='ml-[-5px]' />
@@ -482,7 +502,7 @@ export default function ProductDetails({ productDetails }: Props) {
                                         {productDetails?.shop?.name}
                                     </span>
                                 </div>
-                                <Link href={"#"} className='text-blue-500 text-sm flex items-center gap-1' >
+                                <Link href={"#"} onClick={() => handleChat()} className='text-blue-500 text-sm flex items-center gap-1' >
                                     <MessageSquareText />
                                     Chat Now
                                 </Link>
@@ -518,12 +538,12 @@ export default function ProductDetails({ productDetails }: Props) {
             <div className='w-[90%] lg:w-[80%] mx-auto mt-5'>
                 <div className='bg-white min-h-[60vh] h-full p-5'>
                     <h3 className='text-lg font-semibold'>Product Details of {productDetails?.title}</h3>
-                    <div 
-                        className='prose prose-sm text-slate-200 max-w-none' 
+                    <div
+                        className='prose prose-sm text-slate-200 max-w-none'
                         dangerouslySetInnerHTML={{
                             __html: productDetails?.detailed_description
                         }}
-                        // styling ke saath detailed description dikhega yaha, ki agar product banate wakt images wagere add kiya tha to waise hi dikhega
+                    // styling ke saath detailed description dikhega yaha, ki agar product banate wakt images wagere add kiya tha to waise hi dikhega
                     />
                 </div>
             </div>
@@ -539,7 +559,7 @@ export default function ProductDetails({ productDetails }: Props) {
                 <div className='w-full h-full my-5 p-5 '>
                     <h3 className='text-xl font-semibold mb-2'>You may also like</h3>
                     <div className='m-auto grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5'>
-                        {recommendedProducts?.map((i:any) => (
+                        {recommendedProducts?.map((i: any) => (
                             <ProductCard key={i.id} product={i} />
                         ))}
                     </div>

@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "apps/user-ui/src/utils/axiosInstance";
 import Link from "next/link";
 
-const fetchOrders = async () => {
+const fetchOrders = async () => {   
     const res = await axiosInstance.get("/order/api/get-user-orders");
     return res.data.orders;
 };
@@ -75,7 +75,7 @@ const OrdersTable = () => {
                 header: "Actions",
                 cell: ({ row }: any) => (
                     <Link
-                        href={`/order/₹{row.original.id}`}
+                        href={`/order/${row.original.id}`}
                         className="text-gray-500 hover:text-gray-700 transition"
                     >
                         <Eye size={18} />
