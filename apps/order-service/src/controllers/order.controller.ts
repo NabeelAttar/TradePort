@@ -6,6 +6,7 @@ import crypto from 'crypto'
 import { Prisma } from "@prisma/client";
 import { sendEmail } from "../utils/send-email";
 import Razorpay from 'razorpay';
+import { sendLog } from "@packages/utils/logs/send-logs";
 
 const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID!,
@@ -386,7 +387,7 @@ export const verifyRazorpayPayment = async (
                         message: `Customer placed an order.`,
                         creatorId: uid,
                         receiverId: shop.sellerId,
-                        redirect_link: `https://tradeport.com/order/${sessionId}`,
+                        redirect_link: `http://localhost:3002/order/${createdOrder.id}`,
                     },
                 });
             });
@@ -410,7 +411,7 @@ export const verifyRazorpayPayment = async (
                 message: `New order placed by ${name}`,
                 creatorId: uid,
                 receiverId: "admin",
-                redirect_link: `https://tradeport.com/order/${sessionId}`,
+                redirect_link: `https://tradeport.com/order/${razorpay_order_id}`,
             },
         });
 
@@ -622,6 +623,12 @@ export const verifyCouponCode = async (req: any, res: Response, next: NextFuncti
 
 export const getUserOrders = async (req: any, res: Response, next: NextFunction) => {
     try {
+        await sendLog({
+            type: "success",
+            message: `User order retrieved ${req.user?.email}`,
+            source: "order-service"
+        })
+        
         const orders = await prisma.orders.findMany({
             where: {
                 userId: req.user.id

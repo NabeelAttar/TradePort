@@ -6,18 +6,21 @@ import ProfileIcon from '../../assets/svgs/ProfileIcon'
 import HeaderBottom from './HeaderBottom'
 import useUser from '../../hooks/useUser';
 import { useStore } from '../../app/stores';
+import useLayout from '../../hooks/useLayout';
+import Image from 'next/image';
 
 const  Header = () => {
     const {user, isLoading} = useUser();
     const wishlist = useStore((state:any) => state.wishlist);
     const cart = useStore((state:any) => state.cart);
+    const { layout } = useLayout()
 
   return (
     <div className='w-full bg-white'>
         <div className='w-[80%] py-5 m-auto flex items-center justify-between'>
             <div>
                 <Link href={"/"}>
-                    <span className='text-3xl font-[700]'>TradePort</span>
+                    <Image src={layout?.logo} width={300} height={100} alt='' className='h-[70px] ml-[-50px] mb-[-30px] object-cover' />
                 </Link>
             </div>
             <div className='w-[50%] relative'>

@@ -1,7 +1,7 @@
-import { isAdmin } from "@packages/middlewares/authorizedRoles";
+import { isAdmin, isSeller } from "@packages/middlewares/authorizedRoles";
 import isAuthenticated from "@packages/middlewares/isAuthenticated";
 import express, { Router } from "express";
-import { addCategory, addNewAdmin, addSubCategory, banUser, getAllAdmins, getAllCUstomizations, getALlEvents, getAllProducts, getAllSellers, getAllUsers, getDeviceUsageAnalytics, updateSiteAsset, uploadSiteAsset } from "../controllers/admin.controllers";
+import { addCategory, addNewAdmin, addSubCategory, banUser, getAllAdmins, getAllCUstomizations, getALlEvents, getAllProducts, getAllSellers, getAllUsers, getDeviceUsageAnalytics, markNotificationAsRead, sellerNotifications, updateSiteAsset, uploadSiteAsset, userNotifications } from "../controllers/admin.controllers";
 
 const router: Router = express.Router()
 
@@ -19,5 +19,10 @@ router.post("/add-category", isAuthenticated, isAdmin, addCategory);
 router.post("/add-subcategory", isAuthenticated, isAdmin, addSubCategory);
 router.put("/update-site-asset", isAuthenticated, isAdmin, updateSiteAsset);
 router.post("/upload-site-asset", isAuthenticated, isAdmin, uploadSiteAsset);
+
+router.get("/seller-notifications", isAuthenticated, isSeller, sellerNotifications);
+router.get("/get-user-notifications", isAuthenticated, userNotifications);
+router.get("/get-all-notifications", isAuthenticated, isAdmin, sellerNotifications);
+router.post("/mark-notification-as-read", isAuthenticated, markNotificationAsRead)
 
 export default router

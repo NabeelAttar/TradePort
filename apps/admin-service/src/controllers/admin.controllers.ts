@@ -496,3 +496,89 @@ export const updateSiteAsset = async (
     return next(error)
   }
 }
+
+// fetching notifications for seller
+export const sellerNotifications = async (req: any, res: Response, next: NextFunction) => {
+    try {
+        const sellerId = req.sellerId;
+
+        const notifications = await prisma.notifications.findMany({
+            where: {
+                receiverId: sellerId
+            },
+            orderBy: {
+                createdAt: "desc"
+            }
+        })
+
+        res.status(200).json({
+            success: true,
+            notifications
+        })
+    } catch (error) {
+        return next(error);
+    }
+}
+
+export const getAllNotifications = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const notifications = await prisma.notifications.findMany({
+            where: {
+                receiverId: "admin"
+            },
+            orderBy: {
+                createdAt: "desc"
+            }
+        })
+
+        res.status(200).json({
+            success: true,
+            notifications
+        })
+    } catch (error) {
+        return next(error)
+    }
+}
+
+// get all isers notifications
+export const userNotifications = async (req: any, res: Response, next: NextFunction) => {
+    try {
+        const notifications = await prisma.notifications.findMany({
+            where: {
+                receiverId: req.user.id
+            },
+            orderBy: {
+                createdAt: "desc"
+            }
+        })
+
+        res.status(200).json({
+            success: true,
+            notifications
+        })
+    } catch (error) {
+        return next(error);
+    }
+}
+
+// mark notifications as read
+export const markNotificationAsRead = async (req: any, res: Response, next: NextFunction) => {
+    try {
+        const { notificationId } = req.body
+        if(!notificationId){
+            return next(new ValidationError("Notification Id is required."))
+        }
+
+        const notification = await prisma.notifications.update({
+            where: {id: notificationId},
+            data: { status : "Read"}
+        })
+
+        res.status(200).json({
+            success: true,
+            notification
+        })
+    } catch (error) {
+        return next(error)
+    }
+}

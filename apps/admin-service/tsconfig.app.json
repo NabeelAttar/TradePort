@@ -5,6 +5,7 @@
     "types": [
       "node"
     ],
+    "ignoreDeprecations": "6.0",
     "rootDir": "../../",
     "tsBuildInfoFile": "out-tsc/auth-service/tsconfig.app.tsbuildinfo"
   },

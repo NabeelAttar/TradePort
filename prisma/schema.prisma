@@ -52,7 +52,7 @@ model userAnalytics {
   lastVisited    DateTime
   lastTrained    DateTime? @default(now())
   actions        Json?
-  recommendation Json?
+  recommendations Json?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 }

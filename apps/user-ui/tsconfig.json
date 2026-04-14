@@ -8,6 +8,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    "ignoreDeprecations": "6.0",
     "lib": [
       "dom",
       "dom.iterable",

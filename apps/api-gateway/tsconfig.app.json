@@ -6,6 +6,7 @@
       "node",
       "express"
     ],
+    "ignoreDeprecations": "6.0",
     "rootDir": "src",
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
   },

@@ -1,0 +1,1115 @@
+[
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8130c"
+    },
+    "name": "Attar Bangles",
+    "bio": "all types of bangles and wedding accessories are available here.",
+    "category": "jewelry",
+    "address": "rabodi, thane - 400601",
+    "opening_hours": "Mon-Sat 9am-9pm",
+    "website": "https://becodemy.com",
+    "ratings": 4.5,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8130b"
+    },
+    "createdAt": {
+      "$date": "2026-01-29T12:50:22.972Z"
+    },
+    "updatedAt": {
+      "$date": "2026-01-29T12:50:22.972Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8130d"
+    },
+    "name": "TechHub Electronics",
+    "bio": "Premium electronics and gadgets with warranty and service support.",
+    "category": "electronics",
+    "address": "Fort, Mumbai - 400001",
+    "opening_hours": "Daily 10am-8pm",
+    "website": "https://techhubelectronics.com",
+    "ratings": 4.7,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8130c"
+    },
+    "createdAt": {
+      "$date": "2026-01-28T10:30:15.123Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-15T14:22:45.456Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8130e"
+    },
+    "name": "Fabric Dreams",
+    "bio": "Finest quality fabrics, sarees, and traditional wear for all occasions.",
+    "category": "clothing",
+    "address": "Dadar, Mumbai - 400014",
+    "opening_hours": "Mon-Sun 10am-9pm",
+    "website": "https://fabricdreams.co.in",
+    "ratings": 4.6,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8130d"
+    },
+    "createdAt": {
+      "$date": "2026-01-27T08:15:30.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-10T16:45:20.321Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8130f"
+    },
+    "name": "Spice Market",
+    "bio": "Organic spices, herbs, and premium quality masalas sourced directly from farmers.",
+    "category": "food",
+    "address": "Crawford Market, Mumbai - 400003",
+    "opening_hours": "Daily 7am-8pm",
+    "website": "https://spicemarket.in",
+    "ratings": 4.8,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8130e"
+    },
+    "createdAt": {
+      "$date": "2026-01-26T09:20:10.654Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-18T11:30:40.987Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81310"
+    },
+    "name": "Page Turners Bookstore",
+    "bio": "Extensive collection of books, fiction, non-fiction, and rare editions.",
+    "category": "books",
+    "address": "Bandra, Mumbai - 400050",
+    "opening_hours": "Tue-Sun 11am-8pm",
+    "website": "https://pageturners.com",
+    "ratings": 4.4,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8130f"
+    },
+    "createdAt": {
+      "$date": "2026-01-25T13:45:22.345Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-14T09:15:30.678Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81311"
+    },
+    "name": "Home Decor Plus",
+    "bio": "Beautiful home furniture, decor items, and kitchen appliances.",
+    "category": "home",
+    "address": "Powai, Mumbai - 400076",
+    "opening_hours": "Daily 10am-10pm",
+    "website": "https://homedecorplus.in",
+    "ratings": 4.3,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81310"
+    },
+    "createdAt": {
+      "$date": "2026-01-24T11:30:45.432Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-12T15:20:55.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81312"
+    },
+    "name": "Beauty Bliss",
+    "bio": "Authentic beauty and skincare products with expert consultation.",
+    "category": "beauty",
+    "address": "Juhu, Mumbai - 400049",
+    "opening_hours": "Daily 9am-9pm",
+    "website": "https://beautybliss.co.in",
+    "ratings": 4.6,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81311"
+    },
+    "createdAt": {
+      "$date": "2026-01-23T14:20:15.234Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-16T12:10:30.567Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81313"
+    },
+    "name": "Sports Arena",
+    "bio": "Complete sports equipment and activewear for all age groups.",
+    "category": "sports",
+    "address": "Andheri, Mumbai - 400058",
+    "opening_hours": "Mon-Sun 9am-8pm",
+    "website": "https://sportsarena.in",
+    "ratings": 4.5,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81312"
+    },
+    "createdAt": {
+      "$date": "2026-01-22T10:15:40.165Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-17T13:45:22.234Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81314"
+    },
+    "name": "Toy Kingdom",
+    "bio": "Educational and fun toys for children of all ages.",
+    "category": "toys",
+    "address": "Colaba, Mumbai - 400005",
+    "opening_hours": "Daily 10am-9pm",
+    "website": "https://toykingdom.co.in",
+    "ratings": 4.2,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81313"
+    },
+    "createdAt": {
+      "$date": "2026-01-21T12:40:20.543Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-13T10:35:15.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81315"
+    },
+    "name": "AutoCare Solutions",
+    "bio": "Car accessories, maintenance products, and auto parts.",
+    "category": "automotive",
+    "address": "Navi Mumbai - 400701",
+    "opening_hours": "Mon-Sat 8am-7pm",
+    "website": "https://autocaresolutions.com",
+    "ratings": 4.4,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81314"
+    },
+    "createdAt": {
+      "$date": "2026-01-20T09:25:35.321Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-19T14:50:45.654Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81316"
+    },
+    "name": "Pet Paradise",
+    "bio": "Pet food, toys, grooming products, and pet care accessories.",
+    "category": "pets",
+    "address": "Malad, Mumbai - 400064",
+    "opening_hours": "Daily 10am-8pm",
+    "website": "https://petparadise.in",
+    "ratings": 4.7,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81315"
+    },
+    "createdAt": {
+      "$date": "2026-01-19T15:30:10.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-11T11:20:55.432Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81317"
+    },
+    "name": "Garden Haven",
+    "bio": "Plants, seeds, gardening tools, and organic fertilizers.",
+    "category": "gardening",
+    "address": "Thane - 400601",
+    "opening_hours": "Daily 8am-6pm",
+    "website": "https://gardenhaven.co.in",
+    "ratings": 4.6,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81316"
+    },
+    "createdAt": {
+      "$date": "2026-01-18T08:45:25.567Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-20T16:10:30.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81318"
+    },
+    "name": "Jewelry Elegance",
+    "bio": "Gold, silver, and diamond jewelry with certification and buyback options.",
+    "category": "jewelry",
+    "address": "Linking Road, Mumbai - 400052",
+    "opening_hours": "Mon-Sat 10am-8pm",
+    "website": "https://jewelryelegance.com",
+    "ratings": 4.8,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81317"
+    },
+    "createdAt": {
+      "$date": "2026-01-17T11:50:15.432Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-15T13:40:50.234Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81319"
+    },
+    "name": "Fashion Forward",
+    "bio": "Latest fashion trends, designer wear, and accessories.",
+    "category": "clothing",
+    "address": "Westside, Mumbai - 400054",
+    "opening_hours": "Daily 10am-10pm",
+    "website": "https://fashionforward.in",
+    "ratings": 4.5,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81318"
+    },
+    "createdAt": {
+      "$date": "2026-01-16T13:20:40.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-18T09:30:15.567Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8131a"
+    },
+    "name": "Gadget Galaxy",
+    "bio": "Latest mobile phones, laptops, tablets, and accessories.",
+    "category": "electronics",
+    "address": "Phoenix Market City, Mumbai - 400080",
+    "opening_hours": "Daily 10am-10pm",
+    "website": "https://gadgetgalaxy.co.in",
+    "ratings": 4.6,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81319"
+    },
+    "createdAt": {
+      "$date": "2026-01-15T10:35:20.321Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-14T15:45:10.654Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8131b"
+    },
+    "name": "Sweet Delights",
+    "bio": "Fresh bakery items, desserts, and confectionery products.",
+    "category": "food",
+    "address": "Vile Parle, Mumbai - 400057",
+    "opening_hours": "Daily 7am-9pm",
+    "website": "https://sweetdelights.in",
+    "ratings": 4.7,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8131a"
+    },
+    "createdAt": {
+      "$date": "2026-01-14T07:15:55.876Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-17T12:20:40.432Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8131c"
+    },
+    "name": "Fitness Hub",
+    "bio": "Gym equipment, workout apparel, and fitness supplements.",
+    "category": "sports",
+    "address": "Worli, Mumbai - 400018",
+    "opening_hours": "Daily 6am-10pm",
+    "website": "https://fitnesshub.in",
+    "ratings": 4.4,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8131b"
+    },
+    "createdAt": {
+      "$date": "2026-01-13T06:45:30.234Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-16T14:15:25.789Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8131d"
+    },
+    "name": "Healthy Life",
+    "bio": "Organic food, supplements, and health products.",
+    "category": "food",
+    "address": "Bandra East, Mumbai - 400051",
+    "opening_hours": "Daily 8am-8pm",
+    "website": "https://healthylife.co.in",
+    "ratings": 4.5,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8131c"
+    },
+    "createdAt": {
+      "$date": "2026-01-12T08:20:15.567Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-19T11:35:50.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8131e"
+    },
+    "name": "Kids Zone",
+    "bio": "Kids clothing, shoes, and accessories for all seasons.",
+    "category": "clothing",
+    "address": "Inorbit Mall, Vashi - 400703",
+    "opening_hours": "Daily 10am-10pm",
+    "website": "https://kidszone.in",
+    "ratings": 4.3,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8131d"
+    },
+    "createdAt": {
+      "$date": "2026-01-11T09:30:45.432Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-18T13:50:20.654Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8131f"
+    },
+    "name": "Art Studio",
+    "bio": "Art supplies, paints, brushes, and creative materials.",
+    "category": "arts",
+    "address": "Kala Ghoda, Mumbai - 400001",
+    "opening_hours": "Mon-Sun 10am-7pm",
+    "website": "https://artstudio.co.in",
+    "ratings": 4.2,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8131e"
+    },
+    "createdAt": {
+      "$date": "2026-01-10T10:15:20.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-12T16:40:30.321Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81320"
+    },
+    "name": "Musical Melodies",
+    "bio": "Musical instruments and equipment for all skill levels.",
+    "category": "music",
+    "address": "Grant Road, Mumbai - 400007",
+    "opening_hours": "Tue-Sun 11am-7pm",
+    "website": "https://musicalmelodies.in",
+    "ratings": 4.6,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8131f"
+    },
+    "createdAt": {
+      "$date": "2026-01-09T11:45:35.123Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-15T10:25:15.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81321"
+    },
+    "name": "Premium Footwear",
+    "bio": "Branded shoes, sneakers, and formal footwear.",
+    "category": "clothing",
+    "address": "Haji Ali, Mumbai - 400034",
+    "opening_hours": "Daily 10am-8pm",
+    "website": "https://premiumfootwear.com",
+    "ratings": 4.7,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81320"
+    },
+    "createdAt": {
+      "$date": "2026-01-08T12:30:50.456Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-20T14:10:40.789Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81322"
+    },
+    "name": "Office Plus",
+    "bio": "Office furniture, stationery, and workplace solutions.",
+    "category": "office",
+    "address": "Chakala, Mumbai - 400093",
+    "opening_hours": "Mon-Sat 9am-6pm",
+    "website": "https://officeplus.in",
+    "ratings": 4.3,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81321"
+    },
+    "createdAt": {
+      "$date": "2026-01-07T09:20:15.567Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-14T11:50:25.432Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81323"
+    },
+    "name": "Camera Studio",
+    "bio": "Cameras, lenses, and professional photography equipment.",
+    "category": "electronics",
+    "address": "Fort, Mumbai - 400001",
+    "opening_hours": "Mon-Sat 10am-7pm",
+    "website": "https://camerastudio.co.in",
+    "ratings": 4.8,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81322"
+    },
+    "createdAt": {
+      "$date": "2026-01-06T10:40:30.234Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-16T15:30:10.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81324"
+    },
+    "name": "Coffee Corner",
+    "bio": "Premium coffee beans, tea, and cafe supplies.",
+    "category": "food",
+    "address": "Juhu Tara Road, Mumbai - 400049",
+    "opening_hours": "Daily 7am-9pm",
+    "website": "https://coffeecorner.in",
+    "ratings": 4.6,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81323"
+    },
+    "createdAt": {
+      "$date": "2026-01-05T07:30:45.123Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-18T09:15:55.654Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81325"
+    },
+    "name": "Leather Goods",
+    "bio": "Premium leather bags, wallets, and accessories.",
+    "category": "fashion",
+    "address": "Goregaon, Mumbai - 400062",
+    "opening_hours": "Daily 10am-8pm",
+    "website": "https://leathergoods.co.in",
+    "ratings": 4.5,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81324"
+    },
+    "createdAt": {
+      "$date": "2026-01-04T10:15:20.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-17T12:40:50.321Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81326"
+    },
+    "name": "Wellness Center",
+    "bio": "Health supplements, vitamins, and wellness products.",
+    "category": "health",
+    "address": "Parel, Mumbai - 400012",
+    "opening_hours": "Daily 9am-9pm",
+    "website": "https://wellnesscenter.in",
+    "ratings": 4.7,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81325"
+    },
+    "createdAt": {
+      "$date": "2026-01-03T09:45:35.432Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-19T14:20:15.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81327"
+    },
+    "name": "Home Appliances Store",
+    "bio": "Kitchen appliances, electronics, and household items.",
+    "category": "home",
+    "address": "Santacruz, Mumbai - 400055",
+    "opening_hours": "Daily 10am-9pm",
+    "website": "https://homeappliancesstore.in",
+    "ratings": 4.4,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81326"
+    },
+    "createdAt": {
+      "$date": "2026-01-02T10:30:10.567Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-15T11:50:40.234Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81328"
+    },
+    "name": "Wedding Store",
+    "bio": "Wedding dresses, lehengas, and traditional wedding wear.",
+    "category": "clothing",
+    "address": "Andheri East, Mumbai - 400069",
+    "opening_hours": "Mon-Sun 10am-9pm",
+    "website": "https://weddingstore.co.in",
+    "ratings": 4.8,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81327"
+    },
+    "createdAt": {
+      "$date": "2026-01-01T11:20:25.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-20T13:30:20.654Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81329"
+    },
+    "name": "Tech Repair Hub",
+    "bio": "Mobile and laptop repair services with warranty.",
+    "category": "electronics",
+    "address": "Dadar East, Mumbai - 400014",
+    "opening_hours": "Mon-Sat 10am-7pm",
+    "website": "https://techrepairhub.in",
+    "ratings": 4.3,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81328"
+    },
+    "createdAt": {
+      "$date": "2025-12-31T10:15:40.432Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-16T09:45:15.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8132a"
+    },
+    "name": "Organic Market",
+    "bio": "Fresh organic vegetables, fruits, and dairy products.",
+    "category": "food",
+    "address": "Borivali, Mumbai - 400092",
+    "opening_hours": "Daily 6am-10pm",
+    "website": "https://organicmarket.in",
+    "ratings": 4.6,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81329"
+    },
+    "createdAt": {
+      "$date": "2025-12-30T06:30:20.123Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-14T10:20:50.789Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8132b"
+    },
+    "name": "Aromatherapy Store",
+    "bio": "Essential oils, diffusers, and aromatherapy products.",
+    "category": "beauty",
+    "address": "Lower Parel, Mumbai - 400013",
+    "opening_hours": "Daily 10am-7pm",
+    "website": "https://aromatherapystore.co.in",
+    "ratings": 4.5,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8132a"
+    },
+    "createdAt": {
+      "$date": "2025-12-29T10:45:55.567Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-17T15:35:25.432Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8132c"
+    },
+    "name": "Travel Gear",
+    "bio": "Luggage, backpacks, and travel accessories.",
+    "category": "fashion",
+    "address": "Mahim, Mumbai - 400016",
+    "opening_hours": "Daily 10am-8pm",
+    "website": "https://travelgear.in",
+    "ratings": 4.4,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8132b"
+    },
+    "createdAt": {
+      "$date": "2025-12-28T10:20:35.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-18T12:50:10.654Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8132d"
+    },
+    "name": "Pet Health",
+    "bio": "Veterinary products and pet health services.",
+    "category": "pets",
+    "address": "Bandra Reclamation, Mumbai - 400050",
+    "opening_hours": "Daily 10am-6pm",
+    "website": "https://pethealth.co.in",
+    "ratings": 4.7,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8132c"
+    },
+    "createdAt": {
+      "$date": "2025-12-27T10:35:50.321Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-19T11:15:40.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8132e"
+    },
+    "name": "Craft Haven",
+    "bio": "DIY crafts, knitting supplies, and handmade items.",
+    "category": "arts",
+    "address": "Mulund, Mumbai - 400080",
+    "opening_hours": "Tue-Sun 11am-7pm",
+    "website": "https://crafthaven.in",
+    "ratings": 4.2,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8132d"
+    },
+    "createdAt": {
+      "$date": "2025-12-26T11:40:15.567Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-20T14:25:30.234Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8132f"
+    },
+    "name": "Bakery Express",
+    "bio": "Fresh bread, pastries, and baked goods made daily.",
+    "category": "food",
+    "address": "Matunga, Mumbai - 400019",
+    "opening_hours": "Daily 7am-8pm",
+    "website": "https://bakeryexpress.in",
+    "ratings": 4.8,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8132e"
+    },
+    "createdAt": {
+      "$date": "2025-12-25T07:15:20.432Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-15T09:50:15.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81330"
+    },
+    "name": "Eyewear Palace",
+    "bio": "Glasses, sunglasses, and optical frames for all styles.",
+    "category": "fashion",
+    "address": "Khar, Mumbai - 400052",
+    "opening_hours": "Daily 10am-8pm",
+    "website": "https://eyewearpalace.co.in",
+    "ratings": 4.5,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8132f"
+    },
+    "createdAt": {
+      "$date": "2025-12-24T10:25:45.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-16T13:40:50.321Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81331"
+    },
+    "name": "Furniture Showroom",
+    "bio": "Modern and traditional furniture for home and office.",
+    "category": "home",
+    "address": "Vikhroli, Mumbai - 400079",
+    "opening_hours": "Daily 10am-8pm",
+    "website": "https://furnitureshowroom.in",
+    "ratings": 4.6,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81330"
+    },
+    "createdAt": {
+      "$date": "2025-12-23T10:50:30.123Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-17T15:20:25.654Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81332"
+    },
+    "name": "Yoga Studio Supplies",
+    "bio": "Yoga mats, blocks, straps, and fitness gear.",
+    "category": "sports",
+    "address": "Chembur, Mumbai - 400074",
+    "opening_hours": "Daily 8am-8pm",
+    "website": "https://yogastudiosupplies.in",
+    "ratings": 4.4,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81331"
+    },
+    "createdAt": {
+      "$date": "2025-12-22T08:20:15.567Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-18T11:45:40.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81333"
+    },
+    "name": "Electronics Bazaar",
+    "bio": "Used and refurbished electronics at great prices.",
+    "category": "electronics",
+    "address": "Khetwadi, Mumbai - 400004",
+    "opening_hours": "Mon-Sat 10am-7pm",
+    "website": "https://electronicsbazaar.co.in",
+    "ratings": 4.1,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81332"
+    },
+    "createdAt": {
+      "$date": "2025-12-21T10:35:50.432Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-19T14:10:20.234Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81334"
+    },
+    "name": "Sarees Unlimited",
+    "bio": "Traditional and modern sarees from across India.",
+    "category": "clothing",
+    "address": "Girgaon, Mumbai - 400004",
+    "opening_hours": "Daily 11am-8pm",
+    "website": "https://sareesunlimited.in",
+    "ratings": 4.7,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81333"
+    },
+    "createdAt": {
+      "$date": "2025-12-20T11:15:25.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-20T10:30:15.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81335"
+    },
+    "name": "Gourmet Delights",
+    "bio": "Imported foods, cheese, wines, and gourmet products.",
+    "category": "food",
+    "address": "Bandra West, Mumbai - 400050",
+    "opening_hours": "Daily 10am-8pm",
+    "website": "https://gourmetdelights.co.in",
+    "ratings": 4.8,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81334"
+    },
+    "createdAt": {
+      "$date": "2025-12-19T10:45:40.123Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-15T12:20:50.654Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81336"
+    },
+    "name": "Antique Gallery",
+    "bio": "Vintage items, antiques, and collectibles.",
+    "category": "antiques",
+    "address": "Colaba Causeway, Mumbai - 400005",
+    "opening_hours": "Tue-Sun 11am-7pm",
+    "website": "https://antiquegallery.in",
+    "ratings": 4.3,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81335"
+    },
+    "createdAt": {
+      "$date": "2025-12-18T11:30:15.567Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-16T15:50:30.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81337"
+    },
+    "name": "Skincare Paradise",
+    "bio": "Luxury skincare and cosmetics with professional consultation.",
+    "category": "beauty",
+    "address": "Marine Drive, Mumbai - 400020",
+    "opening_hours": "Daily 10am-8pm",
+    "website": "https://skincareparadise.com",
+    "ratings": 4.9,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81336"
+    },
+    "createdAt": {
+      "$date": "2025-12-17T10:20:50.432Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-17T13:15:40.234Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81338"
+    },
+    "name": "Cycle World",
+    "bio": "Bicycles, e-bikes, and cycling accessories.",
+    "category": "sports",
+    "address": "Versova, Mumbai - 400061",
+    "opening_hours": "Daily 9am-8pm",
+    "website": "https://cycleworld.in",
+    "ratings": 4.5,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81337"
+    },
+    "createdAt": {
+      "$date": "2025-12-16T09:40:25.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-18T11:25:15.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81339"
+    },
+    "name": "Gaming Zone",
+    "bio": "Gaming consoles, games, and gaming accessories.",
+    "category": "electronics",
+    "address": "Powai, Mumbai - 400076",
+    "opening_hours": "Daily 11am-9pm",
+    "website": "https://gamingzone.co.in",
+    "ratings": 4.6,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81338"
+    },
+    "createdAt": {
+      "$date": "2025-12-15T11:15:40.567Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-19T14:35:50.654Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8133a"
+    },
+    "name": "Kitchenware Corner",
+    "bio": "Cooking utensils, cookware, and kitchen gadgets.",
+    "category": "home",
+    "address": "Nerul, Navi Mumbai - 400706",
+    "opening_hours": "Daily 10am-8pm",
+    "website": "https://kitchenwarecorner.in",
+    "ratings": 4.4,
+    "sellerId": {
+      "$oid": "697b576596d1147101c81339"
+    },
+    "createdAt": {
+      "$date": "2025-12-14T10:30:15.432Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-20T09:50:25.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8133b"
+    },
+    "name": "Kids Academy",
+    "bio": "Educational toys, books, and learning materials for children.",
+    "category": "toys",
+    "address": "Ashok Nagar, Mumbai - 400068",
+    "opening_hours": "Daily 10am-7pm",
+    "website": "https://kidsacademy.in",
+    "ratings": 4.7,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8133a"
+    },
+    "createdAt": {
+      "$date": "2025-12-13T10:45:50.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-15T12:15:30.321Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8133c"
+    },
+    "name": "Dental Care Store",
+    "bio": "Dental products, braces, and oral care items.",
+    "category": "health",
+    "address": "Tardeo, Mumbai - 400034",
+    "opening_hours": "Mon-Sat 10am-7pm",
+    "website": "https://dentalcarestore.co.in",
+    "ratings": 4.5,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8133b"
+    },
+    "createdAt": {
+      "$date": "2025-12-12T10:20:25.567Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-16T14:40:15.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8133d"
+    },
+    "name": "Bedding Bliss",
+    "bio": "Bedsheets, pillows, blankets, and bedding accessories.",
+    "category": "home",
+    "address": "Wadala, Mumbai - 400031",
+    "opening_hours": "Daily 10am-9pm",
+    "website": "https://beddingbliss.in",
+    "ratings": 4.6,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8133c"
+    },
+    "createdAt": {
+      "$date": "2025-12-11T10:35:40.432Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-17T11:20:50.654Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8133e"
+    },
+    "name": "Sports Academy",
+    "bio": "Professional sports training equipment and gear.",
+    "category": "sports",
+    "address": "Thane West - 400601",
+    "opening_hours": "Daily 7am-9pm",
+    "website": "https://sportsacademy.in",
+    "ratings": 4.7,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8133d"
+    },
+    "createdAt": {
+      "$date": "2025-12-10T07:20:15.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-18T13:45:30.876Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c8133f"
+    },
+    "name": "Costume Design",
+    "bio": "Costumes, costumes accessories, and theatrical wear.",
+    "category": "clothing",
+    "address": "Prabhadevi, Mumbai - 400025",
+    "opening_hours": "Tue-Sun 12pm-8pm",
+    "website": "https://costumedesign.co.in",
+    "ratings": 4.2,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8133e"
+    },
+    "createdAt": {
+      "$date": "2025-12-09T12:30:50.567Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-19T15:10:25.432Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "697b578e96d1147101c81340"
+    },
+    "name": "Fragrance House",
+    "bio": "Perfumes, colognes, and fragrance accessories.",
+    "category": "beauty",
+    "address": "Kemps Corner, Mumbai - 400036",
+    "opening_hours": "Daily 10am-8pm",
+    "website": "https://fragrancehouse.in",
+    "ratings": 4.8,
+    "sellerId": {
+      "$oid": "697b576596d1147101c8133f"
+    },
+    "createdAt": {
+      "$date": "2025-12-08T10:15:25.789Z"
+    },
+    "updatedAt": {
+      "$date": "2026-02-20T12:50:40.876Z"
+    }
+  }
+]
